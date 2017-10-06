@@ -1,0 +1,14 @@
+[[integrators]]
+dt = 0.1
+nsteps = 1000
+
+[[system]]
+Nparticles = 100000000
+delta = 0.1
+k1 = 1.0
+k2 = 2.0
+k3 = 3.0
+
+[[output]]
+ifreqout = 10
+outfile  = "output.dat"

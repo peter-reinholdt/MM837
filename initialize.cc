@@ -1,0 +1,61 @@
+#include <string>
+#include <iostream>
+#include <fstream>
+#include "toml.h"
+
+
+class settings{
+    public:
+        int Nparticles;
+        int nsteps;
+        int ifreqout;
+        double delta;
+        double dt;
+        double m;
+        double k1;
+        double k2;
+        double k3;
+        std::string outfile;
+    void fromFile(std::string filename){
+        std::ifstream ifs(filename);
+        toml::ParseResult pr = toml::parse(ifs);
+        toml::Value v = pr.value;
+        //get integrator settings
+        const toml::Value& integrators = v.get<toml::Array>("integrators")[0];
+        dt = integrators.get<double>("dt");
+        nsteps = integrators.get<int>("nsteps");
+        //get system details
+        const toml::Value& system = v.get<toml::Array>("system")[0];
+        Nparticles = system.get<int>("Nparticles");
+        delta = system.get<double>("delta");
+        k1 = system.get<double>("k1");
+        k2 = system.get<double>("k2");
+        k3 = system.get<double>("k3");
+        //get output details
+        const toml::Value& output = v.get<toml::Array>("output")[0];
+        ifreqout = output.get<int>("ifreqout");
+        outfile  = output.get<std::string>("outfile");
+        ifs.close();
+    }
+};
+
+struct configuration{
+    settings Settings;
+    std::vector<double> x;
+    std::vector<double> p;
+};
+
+
+void initialize(std::string filename, configuration& con){
+    //read input file
+    settings st;
+    st.fromFile(filename);
+    con.Settings = st;
+    con.x.resize(st.Nparticles);
+    con.p.resize(st.Nparticles);
+    //set initial p, x
+    for(int i=0; i<st.Nparticles; i++){
+        con.x[i] = 0.0;
+        con.p[i] = sin((2*M_PI*(i+st.delta)/st.Nparticles));
+    }
+}
