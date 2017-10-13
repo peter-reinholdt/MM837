@@ -11,9 +11,7 @@ class settings{
         double delta;
         double dt;
         double m;
-        double k1;
-        double k2;
-        double k3;
+        std::vector<double> k;
         std::string outfile;
     void fromFile(std::string filename);
 };

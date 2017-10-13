@@ -5,6 +5,7 @@
 
 
 class settings{
+    private:
     public:
         int Nparticles;
         int nsteps;
@@ -12,9 +13,7 @@ class settings{
         double delta;
         double dt;
         double m;
-        double k1;
-        double k2;
-        double k3;
+        std::vector<double> k;
         std::string outfile;
     void fromFile(std::string filename){
         std::ifstream ifs(filename);
@@ -28,9 +27,11 @@ class settings{
         const toml::Value& system = v.get<toml::Array>("system")[0];
         Nparticles = system.get<int>("Nparticles");
         delta = system.get<double>("delta");
-        k1 = system.get<double>("k1");
-        k2 = system.get<double>("k2");
-        k3 = system.get<double>("k3");
+        k.resize(3);
+        k[0] = system.get<double>("k1");
+        k[1] = system.get<double>("k2");
+        k[2] = system.get<double>("k3");
+        
         //get output details
         const toml::Value& output = v.get<toml::Array>("output")[0];
         ifreqout = output.get<int>("ifreqout");

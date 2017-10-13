@@ -1,6 +1,6 @@
 #include <vector>
 
-void computeForces(const std::vector<double>& x, std::vector<double>& forces){
+void computeForces(const std::vector<double>& x, std::vector<double>& forces, const std::vector<double> k){
     double x1, x2, x3;
     int N = forces.size();
     //zero out old forces
@@ -13,28 +13,28 @@ void computeForces(const std::vector<double>& x, std::vector<double>& forces){
         x1 = x[i] - x[i+1];
         x2 = x1 * x1;
         x3 = x2 * x1; 
-        forces[i] += -(x1+x2+x3);
+        forces[i] += -(k[0]*x1+k[1]*x2+k[2]*x3);
         x1 = x[i-1] - x[i];
         x2 = x1 * x1;
         x3 = x2 * x1; 
-        forces[i] -= -(x1+x2+x3);
+        forces[i] -= -(k[0]*x1+k[1]*x2+k[2]*x3);
     }
     //do the edge forces 
     x1 = x[0] - x[1];
     x2 = x1 * x1;
     x3 = x2 * x1; 
-    forces[0] += -(x1+x2+x3);
+    forces[0] += -(k[0]*x1+k[1]*x2+k[2]*x3);
     x1 = x[N-1] - x[0];
     x2 = x1 * x1;
     x3 = x2 * x1; 
-    forces[0] -= -(x1+x2+x3);
+    forces[0] -= -(k[0]*x1+k[1]*x2+k[2]*x3);
     // 
     x1 = x[N-1] - x[0];
     x2 = x1 * x1;
     x3 = x2 * x1; 
-    forces[N-1] += -(x1+x2+x3);
+    forces[N-1] += -(k[0]*x1+k[1]*x2+k[2]*x3);
     x1 = x[N-2] - x[N-1];
     x2 = x1 * x1;
     x3 = x2 * x1; 
-    forces[N-1] -= -(x1+x2+x3);
+    forces[N-1] -= -(k[0]*x1+k[1]*x2+k[2]*x3);
 }

@@ -9,6 +9,6 @@ int main(int argc, char** argv){
     }
     configuration con;
     initialize(argv[1], con);
-    leapfrog(con.x, con.p, con.Settings.nsteps, con.Settings.dt, con.Settings.ifreqout, con.Settings.outfile);
+    leapfrog(con.x, con.p, con.Settings.k, con.Settings.nsteps, con.Settings.dt, con.Settings.ifreqout, con.Settings.outfile);
     return 0;
 }
