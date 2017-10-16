@@ -35,15 +35,16 @@ class settings{
         //get output details
         const toml::Value& output = v.get<toml::Array>("output")[0];
         ifreqout = output.get<int>("ifreqout");
-        outfile  = output.get<std::string>("outfile");
+        outfile = output.get<std::string>("outfile");
         ifs.close();
     }
 };
 
-struct configuration{
-    settings Settings;
-    std::vector<double> x;
-    std::vector<double> p;
+class configuration{
+    public:
+        settings Settings;
+        std::vector<double> x;
+        std::vector<double> p;
 };
 
 

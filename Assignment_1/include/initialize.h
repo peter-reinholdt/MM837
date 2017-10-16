@@ -17,10 +17,11 @@ class settings{
 };
 
 
-struct configuration{
-    settings Settings;
-    std::vector<double> x;
-    std::vector<double> p;
+class configuration{
+    public:
+        settings Settings;
+        std::vector<double> x;
+        std::vector<double> p;
 };
 
 

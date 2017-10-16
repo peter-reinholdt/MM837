@@ -1,9 +1,8 @@
 #include <vector>
 #include <fstream>
-#include <iostream>
 #include <string>
 #include "forces.h"
-
+#include "properties.h"
 
 void leapfrog(std::vector<double>& x, std::vector<double>& p, const std::vector<double> k, const int nsteps, const double dt, const int ifreqout, const std::string outfile){
     //kick-drift-kick form
@@ -11,7 +10,14 @@ void leapfrog(std::vector<double>& x, std::vector<double>& p, const std::vector<
     std::vector<double> forces;
     forces.resize(N);
     computeForces(x, forces, k);
+    
+    FILE * of;    
+    of = fopen(outfile.c_str(), "w");
+
     for(int n=0; n<nsteps; n++){
+        if (n%ifreqout == 0){
+            writeProperties(x, p, k, of);
+        }
         for(int i=0; i<N; i++){
             //p_{i+0.5} = p_i + a_i * 0.5 * dt
             p[i] += forces[i] * 0.5 * dt;
@@ -24,4 +30,5 @@ void leapfrog(std::vector<double>& x, std::vector<double>& p, const std::vector<
             p[i] += forces[i] * 0.5 * dt;
         }
     }
+    fclose(of);
 }
