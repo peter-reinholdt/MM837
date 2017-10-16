@@ -15,14 +15,16 @@ class settings{
         double m;
         std::vector<double> k;
         std::string outfile;
+        std::string integrator;
     void fromFile(std::string filename){
         std::ifstream ifs(filename);
         toml::ParseResult pr = toml::parse(ifs);
         toml::Value v = pr.value;
         //get integrator settings
         const toml::Value& integrators = v.get<toml::Array>("integrators")[0];
-        dt = integrators.get<double>("dt");
-        nsteps = integrators.get<int>("nsteps");
+        dt         = integrators.get<double>("dt");
+        nsteps     = integrators.get<int>("nsteps");
+        integrator = integrators.get<std::string>("integrator");
         //get system details
         const toml::Value& system = v.get<toml::Array>("system")[0];
         Nparticles = system.get<int>("Nparticles");

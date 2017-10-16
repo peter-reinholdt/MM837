@@ -13,6 +13,7 @@ class settings{
         double m;
         std::vector<double> k;
         std::string outfile;
+        std::string integrator;
     void fromFile(std::string filename);
 };
 
