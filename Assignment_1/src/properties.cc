@@ -70,7 +70,7 @@ void writeProperties(const std::vector<double>& x, const std::vector<double>& p,
     double P = computeLinearMomentum(p);
     double Q = computeCenterOfMass(x);
 
-    fprintf(outfile, "%12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n", meanPsq, Ekin+Epot, Ekin, Epot, P, Q);
+    fprintf(outfile, "%12.6e %18.12e %12.6e %12.6e %12.6e %12.6e\n", meanPsq, Ekin+Epot, Ekin, Epot, P, Q);
 }
 
 
