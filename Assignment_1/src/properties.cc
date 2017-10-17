@@ -46,12 +46,31 @@ double computePotentialEnergy(const std::vector<double>& x, const std::vector<do
 }
 
 
+double computeLinearMomentum(const std::vector<double>& p){
+    double P = 0.0;
+    for(int i=0; i<p.size(); i++){
+        P += p[i];
+    }
+    return P;
+}
+double computeCenterOfMass(const std::vector<double>& x){
+    double Q = 0.0;
+    for(int i=0; i<x.size(); i++){
+        Q += x[i];
+    }
+    return Q;
+}
+
+
+
 void writeProperties(const std::vector<double>& x, const std::vector<double>& p, const std::vector<double>& k, FILE * outfile){
     double Ekin = computeKineticEnergy(p);
     double Epot = computePotentialEnergy(x, k);
     double meanPsq = computeMeanPsq(p);
-                  //<p^2>            E_tot                 Ekin           Epot
-    fprintf(outfile, "%12.6f %12.6f %12.6f %12.6f\n", meanPsq, Ekin+Epot, Ekin, Epot);
+    double P = computeLinearMomentum(p);
+    double Q = computeCenterOfMass(x);
+
+    fprintf(outfile, "%12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n", meanPsq, Ekin+Epot, Ekin, Epot, P, Q);
 }
 
 
