@@ -17,6 +17,8 @@ class settings{
         std::string outfile;
         std::string integrator;
     void fromFile(std::string filename){
+        //load the settings file and set variables
+        //if something is missing this *will* fail
         std::ifstream ifs(filename);
         toml::ParseResult pr = toml::parse(ifs);
         toml::Value v = pr.value;

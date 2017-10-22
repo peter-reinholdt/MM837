@@ -6,7 +6,7 @@
 
 int main(int argc, char** argv){
     if(argc < 2){
-        std::cout << "Missing input file.\nUsage: FPU.x inputfile\n";
+        std::cout << "Missing input file.\nUsage: spring [inputfile]\n";
         return 1;
     }
     
@@ -20,7 +20,7 @@ int main(int argc, char** argv){
         auto start = std::chrono::system_clock::now();
         leapfrog(con.x, con.p, con.Settings.k, con.Settings.nsteps, con.Settings.dt, con.Settings.ifreqout, con.Settings.outfile);
     } else if (con.Settings.integrator == "velocityVerlet"){
-        //real start now
+        //or now
         auto start = std::chrono::system_clock::now();
         velocityVerlet(con.x, con.p, con.Settings.k, con.Settings.nsteps, con.Settings.dt, con.Settings.ifreqout, con.Settings.outfile);
     } else {

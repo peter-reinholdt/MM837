@@ -10,6 +10,8 @@ void computeForces(const std::vector<double>& x, std::vector<double>& forces, co
     
     //do the middle bits
     for(int i=1; i<N-1; i++){
+        //F(x_i) = f(x_i - x_i+1) - f(x_i-1 - x_i)
+        //f(x) = -(k3*x3 + k2*x2 + k1*x1)
         x1 = x[i] - x[i+1];
         x2 = x1 * x1;
         x3 = x2 * x1; 

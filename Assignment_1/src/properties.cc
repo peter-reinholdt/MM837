@@ -62,7 +62,6 @@ double computeCenterOfMass(const std::vector<double>& x){
 }
 
 
-
 void writeProperties(const std::vector<double>& x, const std::vector<double>& p, const std::vector<double>& k, FILE * outfile){
     double Ekin = computeKineticEnergy(p);
     double Epot = computePotentialEnergy(x, k);

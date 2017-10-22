@@ -10,15 +10,18 @@ void leapfrog(std::vector<double>& x, std::vector<double>& p, const std::vector<
     std::vector<double> forces;
     forces.resize(N);
     computeForces(x, forces, k);
-    
+   
+
+    //make some file pointers for output
     FILE * of;    
     of = fopen(outfile.c_str(), "w");
-
     FILE * cf;    
     cf = fopen("coords.dat", "w");
 
     for(int n=0; n<nsteps; n++){
         if (n%ifreqout == 0){
+            //Dump properties and coordinates.
+            //Depending on ifreqout, this dominates execution time...
             writeProperties(x, p, k, of);
             dumpCoordinates(x, p, cf);
         }
@@ -41,6 +44,9 @@ void leapfrog(std::vector<double>& x, std::vector<double>& p, const std::vector<
 
 
 void velocityVerlet(std::vector<double>& x, std::vector<double>& p, const std::vector<double> k, const int nsteps, const double dt, const int ifreqout, const std::string outfile){
+    //same amount of force evaluations as leapfrog, but
+    //one less operation (per particle) (sort of only) in the integrator
+    //at the cost of storing two forces per particle
     int N = x.size();
     std::vector<double> forces;
     forces.resize(N);
@@ -48,15 +54,17 @@ void velocityVerlet(std::vector<double>& x, std::vector<double>& p, const std::v
     oldforces.resize(N);
     computeForces(x, forces, k);
 
+    //make some file pointers for output
     FILE * of;    
     of = fopen(outfile.c_str(), "w");
-
     FILE * cf;    
     cf = fopen("coords.dat", "w");
     
     
     for(int n=0; n<nsteps; n++){
         if (n%ifreqout == 0){
+            //Dump properties and coordinates.
+            //Depending on ifreqout, this dominates execution time...
             writeProperties(x, p, k, of);
             dumpCoordinates(x, p, cf);
         }
