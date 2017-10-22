@@ -1,0 +1,13 @@
+[[integrators]]
+dt = 0.008504489341802677
+nsteps = 1175
+integrator = "velocityVerlet"
+[[system]]
+Nparticles = 21
+delta = 0.33
+k1 = 1.0
+k2 = 1.0
+k3 = 1.0
+[[output]]
+ifreqout = 1
+outfile  = "96.dat"
