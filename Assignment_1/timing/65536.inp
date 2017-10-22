@@ -1,0 +1,15 @@
+[[integrators]]
+dt = 1e-3
+nsteps = 1000
+integrator = "velocityVerlet"
+#integrator = "leapfrog"
+[[system]]
+Nparticles = 65536
+delta = 0.33
+k1 = 1.0
+k2 = 1.0
+k3 = 1.0
+
+[[output]]
+ifreqout = 1001
+outfile  = "output.dat"
