@@ -1,14 +1,15 @@
 [[integrators]]
-dt = 0.1
-nsteps = 1000
-
+dt = 1e-3
+nsteps = 100000000
+integrator = "velocityVerlet"
+#integrator = "leapfrog"
 [[system]]
-Nparticles = 100000000
-delta = 0.1
+Nparticles = 21
+delta = 0.33
 k1 = 1.0
-k2 = 2.0
-k3 = 3.0
+k2 = 1.0
+k3 = 1.0
 
 [[output]]
-ifreqout = 10
-outfile  = "output.dat"
+ifreqout =  100000001
+outfile  = "output_harmonic.dat"

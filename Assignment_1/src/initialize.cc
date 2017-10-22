@@ -60,6 +60,6 @@ void initialize(std::string filename, configuration& con){
     //set initial p, x
     for(int i=0; i<st.Nparticles; i++){
         con.x[i] = 0.0;
-        con.p[i] = sin((2*M_PI*(i+st.delta)/st.Nparticles));
+        con.p[i] = sin((2*M_PI*(i+st.delta)/(double)st.Nparticles));
     }
 }

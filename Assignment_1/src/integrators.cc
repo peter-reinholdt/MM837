@@ -14,9 +14,13 @@ void leapfrog(std::vector<double>& x, std::vector<double>& p, const std::vector<
     FILE * of;    
     of = fopen(outfile.c_str(), "w");
 
+    FILE * cf;    
+    cf = fopen("coords.dat", "w");
+
     for(int n=0; n<nsteps; n++){
         if (n%ifreqout == 0){
             writeProperties(x, p, k, of);
+            dumpCoordinates(x, p, cf);
         }
         for(int i=0; i<N; i++){
             //p_{i+0.5} = p_i + a_i * 0.5 * dt
@@ -31,6 +35,7 @@ void leapfrog(std::vector<double>& x, std::vector<double>& p, const std::vector<
         }
     }
     fclose(of);
+    fclose(cf);
 }
 
 
@@ -46,9 +51,14 @@ void velocityVerlet(std::vector<double>& x, std::vector<double>& p, const std::v
     FILE * of;    
     of = fopen(outfile.c_str(), "w");
 
+    FILE * cf;    
+    cf = fopen("coords.dat", "w");
+    
+    
     for(int n=0; n<nsteps; n++){
         if (n%ifreqout == 0){
             writeProperties(x, p, k, of);
+            dumpCoordinates(x, p, cf);
         }
         for(int i=0; i<N; i++){
             x[i] += p[i] * dt + 0.5 * forces[i] * dt * dt;
@@ -60,6 +70,7 @@ void velocityVerlet(std::vector<double>& x, std::vector<double>& p, const std::v
         }
     }
     fclose(of);
+    fclose(cf);
 }
 
 
