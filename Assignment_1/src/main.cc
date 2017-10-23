@@ -17,11 +17,11 @@ int main(int argc, char** argv){
     initialize(argv[1], con);
     if (con.Settings.integrator == "leapfrog"){
         //real start now
-        auto start = std::chrono::system_clock::now();
+        start = std::chrono::system_clock::now();
         leapfrog(con.x, con.p, con.Settings.k, con.Settings.nsteps, con.Settings.dt, con.Settings.ifreqout, con.Settings.outfile);
     } else if (con.Settings.integrator == "velocityVerlet"){
         //or now
-        auto start = std::chrono::system_clock::now();
+        start = std::chrono::system_clock::now();
         velocityVerlet(con.x, con.p, con.Settings.k, con.Settings.nsteps, con.Settings.dt, con.Settings.ifreqout, con.Settings.outfile);
     } else {
         std::cout << "Error: No integrator specified in settings\n";
