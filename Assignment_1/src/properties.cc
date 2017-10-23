@@ -6,7 +6,7 @@
 
 double computeMeanPsq(const std::vector<double>& p){
     double meanPsq = 0.0;
-    for(int i=0; i<p.size(); i++){
+    for(int i=0; i<(int)p.size(); i++){
         meanPsq += p[i]*p[i];
     } 
     return meanPsq / p.size();
@@ -15,7 +15,7 @@ double computeMeanPsq(const std::vector<double>& p){
 
 double computeKineticEnergy(const std::vector<double>& p){
     double Ekin = 0.0;
-    for(int i=0; i<p.size(); i++){
+    for(int i=0; i<(int)p.size(); i++){
         Ekin += 0.5 * p[i] * p[i];
     }
     return Ekin;
@@ -29,7 +29,7 @@ double computePotentialEnergy(const std::vector<double>& x, const std::vector<do
     double x3;
     double x4;
     //potential from i=0..N-1
-    for(int i=0; i<x.size()-1; i++){
+    for(int i=0; i<(int)x.size()-1; i++){
         x1 = x[i] - x[i+1];
         x2 = x1 * x1;
         x3 = x2 * x1; 
@@ -48,14 +48,14 @@ double computePotentialEnergy(const std::vector<double>& x, const std::vector<do
 
 double computeLinearMomentum(const std::vector<double>& p){
     double P = 0.0;
-    for(int i=0; i<p.size(); i++){
+    for(int i=0; i<(int)p.size(); i++){
         P += p[i];
     }
     return P;
 }
 double computeCenterOfMass(const std::vector<double>& x){
     double Q = 0.0;
-    for(int i=0; i<x.size(); i++){
+    for(int i=0; i<(int)x.size(); i++){
         Q += x[i];
     }
     return Q;
@@ -74,10 +74,10 @@ void writeProperties(const std::vector<double>& x, const std::vector<double>& p,
 
 
 void dumpCoordinates(const std::vector<double>& x, const std::vector<double>& p, FILE * coords){
-    for (int i=0; i<x.size(); i++){
+    for (int i=0; i<(int)x.size(); i++){
         fprintf(coords, "%8.4f ", x[i]);
     }
-    for (int i=0; i<p.size(); i++){
+    for (int i=0; i<(int)p.size(); i++){
         fprintf(coords, "%8.4f ", p[i]);
     }
     fprintf(coords, "\n");
