@@ -40,7 +40,8 @@ int main(int argc, char** argv) {
 	
 	double p0_l=0.0;
 	double p0_r=0.0;
-
+    
+    bool do_nr = false;
 
 	double tol = 1e-6;
 	double ecur=e0;
@@ -73,7 +74,8 @@ int main(int argc, char** argv) {
 	string phi_file("phi.dat");
 	ofstream fout(phi_file.c_str());
 
-	double fold; 
+	double fold;
+    double fprime;
 
 	//--------------------------------------------------------------------------
 
@@ -122,11 +124,21 @@ int main(int argc, char** argv) {
 
 			if (abs(f) < tol) 
 				break;
-
-			if (it==0)
-				fold=f;
-			else if (abs(fold)<abs(f)) 
-				de = -0.5*de; 
+            
+            if(do_nr){
+                //Newton-Rhapson
+                if (it>0){
+                    fprime = (f-fold)/(de);
+                    de =  -f/fprime;
+                }
+            }else{
+                if (it>0){
+                    if (abs(fold)<abs(f)){
+                        de = -0.5*de; 
+                    }
+                }
+            }
+            
 
 			ecur += de; 
 			fold = f;
