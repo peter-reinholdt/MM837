@@ -7,9 +7,11 @@
 #ifndef __examples_h__
 #define __examples_h__
 
-#include<cmath>
-#include<vector>
+#include <cmath>
+#include <vector>
 #include <iostream>
+
+
 class InfiniteSquareWell { 
 	double e;
 	public: 
@@ -41,6 +43,26 @@ class FiniteSquareWell{
 			return (v-e)*q[0]; 
 		}
 };
+
+
+class LinearWell{ 
+	double e, V0, a;
+	public: 
+		LinearWell(const double& e_in, const double& V0_in, const double& a_in) : e(e_in), V0(V0_in), a(a_in) {} 
+		int getNDof() const { 
+			return 1;
+		}
+		double operator() (int i, const std::vector<double>& q, const double& x) const { 
+            double v;
+            if (fabs(x) <= a){
+                v = V0/a * (fabs(x) - a);
+            }else{
+                v = 0.0;
+            }
+			return (v-e)*q[0]; 
+		}
+};
+
 
 
 class HarmonicOscillator { 
