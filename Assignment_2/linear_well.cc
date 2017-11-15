@@ -35,8 +35,8 @@ int main(int argc, char** argv) {
     double xmin=-20; 
 	double xmax=20;
 
-	double q0_l=exp(-0.5*xmin);
-	double q0_r=exp(-0.5*xmax);
+	double q0_l=1e-6*exp(-0.5*xmin);
+	double q0_r=1e-6*exp(-0.5*xmax);
 	
 	double p0_l=0.0;
 	double p0_r=0.0;
@@ -128,12 +128,18 @@ int main(int argc, char** argv) {
             if(do_nr){
                 //Newton-Rhapson
                 if (it>0){
-                    fprime = (f-fold)/(de);
-                    de =  -f/fprime;
+                    if (fabs(fold) < fabs(f)){
+                        fprime = (f-fold)/(de);
+                        ecur -= de;
+                        de = -0.10*f/fprime;
+                    }else{
+                        fprime = (f-fold)/(de);
+                        de =  -f/fprime;
+                    } 
                 }
             }else{
                 if (it>0){
-                    if (abs(fold)<abs(f)){
+                    if ((fold)<(f)){
                         de = -0.5*de; 
                     }
                 }

@@ -9,16 +9,9 @@
 #include<fstream>
 #include "forces.h"
 #include "integrators.h"
-
+#include "wavefunction.h"
 using namespace std;
 
-double simpsons_rule(const vector<double>& f, const double& epsilon) { 
-	double ret=0.0;
-	for (int i = 0 ; i<f.size()-1; i++)  
-		ret += f[i] + 4.0*f[i+1] + f[i+2]; 
-	ret *= epsilon/3.0;
-	return ret;
-}
 
 int main(int argc, char** argv) {
 
@@ -41,7 +34,7 @@ int main(int argc, char** argv) {
 	double p0_l=0.0;
 	double p0_r=0.0;
     
-    bool do_nr = false;
+    bool do_nr = true;
 
 	double tol = 1e-6;
 	double ecur=e0;

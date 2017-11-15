@@ -23,6 +23,11 @@ class InfiniteSquareWell {
 				const double& x) const { 
 			return -e*q[0]; 
 		}
+
+
+        double get_pot(double x){
+            return 0.0;
+        }
 };
 
 
@@ -42,6 +47,17 @@ class FiniteSquareWell{
             }
 			return (v-e)*q[0]; 
 		}
+
+
+        double get_pot(double x){
+            double v;
+            if (fabs(x) <= a){
+                v = -V0;
+            }else{
+                v = 0.0;
+            }
+            return v;
+        }
 };
 
 
@@ -61,6 +77,17 @@ class LinearWell{
             }
 			return (v-e)*q[0]; 
 		}
+
+
+        double get_pot(double x){
+            double v;
+            if (fabs(x) <= a){
+                v = V0/a * (fabs(x) - a);
+            }else{
+                v = 0.0;
+            }
+            return v;
+        }
 };
 
 
@@ -78,5 +105,11 @@ class HarmonicOscillator {
 			double v = k*x*x; 
 			return (v-e)*q[0]; 
 		}
+
+
+        double get_pot(double x){
+            double v = k * x * x;
+            return v;
+        }
 };
 #endif 
