@@ -158,10 +158,14 @@ int main(int argc, char** argv) {
 
 	vector<double> norm_arr; 
 	for (int i = 0; i<phi.size(); i++) 
-		norm_arr.push_back(phi[i]*phi[i]);  
+		norm_arr.push_back(phi[i]*phi[i]);
 
 	double norm = simpsons_rule(norm_arr, eps); 
 	cout << "norm = " << norm << endl;	
+
+
+
+
 
 	fout << setprecision(6); 
 	for (int i = 0 ; i<phi.size(); i++) {
@@ -171,19 +175,17 @@ int main(int argc, char** argv) {
 		fout << (double)(i)*eps+xmin << "     " << phi[i] << endl;
 	}
 
-	vector<double> phi_double_prime; 
 
-	for (int i = 0 ; i < (phi_prime.size()-1); i++) 
-		phi_double_prime.push_back((phi_prime[i+1]-phi_prime[i])/eps);
+	vector<double> norm_arr2; 
+	for (int i = 0; i<phi.size(); i++) 
+		norm_arr2.push_back(phi[i]*phi[i]);
 
-	vector<double> t_integrand; 
-	for (int i = 0 ; i < phi_double_prime.size(); i++) 
-		t_integrand.push_back(-phi[i]*phi_double_prime[i]);
-
-	double aveT = simpsons_rule(t_integrand, eps);
-
-	cout << "<T> = " << aveT << endl; 
-	
+	norm = simpsons_rule(norm_arr2, eps); 
+	cout << "norm = " << norm << endl;	
+    
+    FiniteSquareWell sw(ecur, V0, a); 
+    wavefunction<FiniteSquareWell> wfn(phi, phi_prime, sw, xmin, xmax, niter);
+    cout << "Norm = " << wfn.norm() << "\n";
 	return 0;
 
 }

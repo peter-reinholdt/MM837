@@ -1,11 +1,13 @@
 #include <vector>
+#include <iostream>
+#include "forces.h"
 
-
-double simpsons_rule(const std::vector<double>& f, const double& epsilon) { 
+double simpsons_rule(const std::vector<double>& f, const double& delta) { 
 	double ret=0.0;
-	for (int i = 0 ; i<f.size()-1; i++)  
-		ret += f[i] + 4.0*f[i+1] + f[i+2]; 
-	ret *= epsilon/3.0;
+	for (int i = 0 ; i<f.size()-3; i++){
+		ret += f[i] + 4.0*f[i+1] + f[i+2];
+    }
+	ret *= delta/3.0;
 	return ret;
 }
 
@@ -21,24 +23,25 @@ class wavefunction{
         int nsteps;
     public:
         //we assume normalized wavefunction
-        wavefunction(std::vector<double> psi_in, 
-                     std::vector<double> psiprime_in,
-                     const Potential& pot_in,
+        wavefunction(const std::vector<double>& psi_in, 
+                     const std::vector<double>& psiprime_in,
+                     Potential pot_in,
                      double xmin_in,
                      double xmax_in,
                      int nsteps_in):
                      psi(psi_in), psiprime(psiprime_in), pot(pot_in), xmax(xmax_in), xmin(xmin_in), nsteps(nsteps_in) {
-                        double epsilon = (xmax-xmin)/double(nsteps-1);
+                        epsilon= (xmax-xmin)/double(nsteps-1);
                         x.resize(psi.size());
                         x2.resize(psi.size());
                         ones.resize(psi.size());
+                        V.resize(psi.size());
                         psiprimeprime.resize(psi.size());
                         double pos = xmin;
                         for (int i=0; i<psi.size(); i++){
                             x[i] = pos;
                             x2[i] = pos * pos;
                             ones[i] = 1.0;
-                            ones[i] = -1.0;
+                            V[i] = pot_in.get_pot(pos);
                             pos += epsilon;
                         }
                         //second derivative of psi or first derivative of psiprime.

@@ -184,19 +184,7 @@ int main(int argc, char** argv) {
 		fout << (double)(i)*eps+xmin << "     " << phi[i] << endl;
 	}
 
-	vector<double> phi_double_prime; 
-
-	for (int i = 0 ; i < (phi_prime.size()-1); i++) 
-		phi_double_prime.push_back((phi_prime[i+1]-phi_prime[i])/eps);
-
-	vector<double> t_integrand; 
-	for (int i = 0 ; i < phi_double_prime.size(); i++) 
-		t_integrand.push_back(-phi[i]*phi_double_prime[i]);
-
-	double aveT = simpsons_rule(t_integrand, eps);
-
-	cout << "<T> = " << aveT << endl; 
-	
+    wavefunction<> wfn	
 	return 0;
 
 }
