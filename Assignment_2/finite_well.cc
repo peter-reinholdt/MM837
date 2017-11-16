@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 	string phi_file("phi.dat");
 	ofstream fout(phi_file.c_str());
 
-	double fold;
+	double fold, f;
     double fprime;
 
 	//--------------------------------------------------------------------------
@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
 			}
 
 			pn_left[0] *= qn_right[0]/qn_left[0]; 
-			double f = (pn_right[0] - pn_left[0])/(pn_right[0] + pn_left[0]);
+			f = (pn_right[0] - pn_left[0])/(pn_right[0] + pn_left[0]);
 			
 			cout <<setprecision(10)<< "ecurr = "<<ecur <<", pn_right = " << pn_right[0] << ", pn_left = "<<
 				pn_left[0] << ", f = "<< f<< endl;
@@ -164,7 +164,7 @@ int main(int argc, char** argv) {
 	if (it==nmax)
 		cout << "WARNING: max iterations reached" << endl;
 
-	cout << setprecision(9) << "it = "<<it<<", e = " <<ecur<<", de = " << de<< ", f = " <<fold<<endl;
+	cout << setprecision(9) << "it = "<<it<<", e = " <<ecur<<", de = " << de<< ", f = " <<f<<endl;
 	
 	cout << "Normalizing..." << endl;
 
