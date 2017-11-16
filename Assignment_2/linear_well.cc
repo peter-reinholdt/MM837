@@ -18,12 +18,14 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
-	if (argc != 3) {
-		cerr << "usage: " << argv[0] <<" <e> <niter>" << endl;
+	if (argc != 5) {
+		cerr << "usage: " << argv[0] <<" <e> <niter> <V0> <a>" << endl;
 		return 1;
 	}
 	double e0; stringstream(argv[1]) >> e0;  //Starting energy. 
 	int niter; stringstream(argv[2]) >> niter;  //The number of steps. 
+    double V0; stringstream(argv[3]) >> V0;
+    double a; stringstream(argv[4]) >> a;
 
 	//Fix the values of phi,phi' at left and right integration endpoints. 
 	//These endpoints are [xmin,xmax]
@@ -41,8 +43,8 @@ int main(int argc, char** argv) {
 
 	double tol = 1e-6;
 	double ecur=e0;
-    double V0 = 16.03074550;
-    double a  = 1.0;
+    //double V0 = 16.03074550;
+    //double a  = 1.0;
 	double de=0.01;
 	vector<double> qn_left(1,q0_l), pn_left(1,p0_l);
 	vector<double> qn_right(1,q0_r), pn_right(1,p0_r);
@@ -206,7 +208,7 @@ int main(int argc, char** argv) {
     cout << "<T> = " << -1.0 * wfn.p2_expectation() << "\n";
     cout << "<V> = " << wfn.V_expectation() << "\n";
     char buffer [256];
-    sprintf(buffer, "lw_E_%e_V_%e_a_%e.dat", ecur, V0, a);
+    sprintf(buffer, "fw_E_%e_V_%e_a_%e.dat", ecur, V0, a);
     wfn.write_data(buffer);
 	return 0;
 
