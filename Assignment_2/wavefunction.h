@@ -39,7 +39,7 @@ class wavefunction{
                         V.resize(psi.size());
                         psiprimeprime.resize(psi.size());
                         double pos = xmin;
-                        for (int i=0; i<psi.size(); i++){
+                        for (int i=0; i<(int)psi.size(); i++){
                             x[i] = pos;
                             x2[i] = pos * pos;
                             ones[i] = 1.0;
@@ -50,7 +50,7 @@ class wavefunction{
                         //Do central difference in the middle bits, forward/backward on ends
                         psiprimeprime[0] = (psiprime[1] - psiprime[0])/(epsilon);
                         psiprimeprime[psi.size()-1] = (psiprime[psi.size()-1] - psiprime[psi.size()-2])/(epsilon);
-                        for (int i=1; i<psi.size()-1; i++){
+                        for (int i=1; i<(int)psi.size()-1; i++){
                             psiprimeprime[i] = (psiprime[i+1] - psiprime[i-1]) / (2*epsilon);
                         }
                      }
@@ -59,7 +59,7 @@ class wavefunction{
         double expectation_value(const std::vector<double>& left, const std::vector<double>& Operator, const std::vector<double>& right){
             std::vector<double> expectation;
             expectation.resize(left.size());
-            for (int i=0; i<left.size(); i++){
+            for (int i=0; i<(int)left.size(); i++){
                 expectation[i] = left[i]*Operator[i]*right[i];
             }
             return simpsons_rule(expectation, epsilon);
@@ -110,7 +110,7 @@ class wavefunction{
         }
     void write_data(std::string filename){
         std::ofstream fout(filename.c_str());
-        for (int i=0; i<psi.size(); i++){
+        for (int i=0; i<(int)psi.size(); i++){
             fout << x[i] << "," << psi[i] << "," << V[i] << "," << E <<"\n";
         } 
     }
