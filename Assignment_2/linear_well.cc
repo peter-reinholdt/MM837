@@ -206,7 +206,7 @@ int main(int argc, char** argv) {
     cout << "<T> = " << -1.0 * wfn.p2_expectation() << "\n";
     cout << "<V> = " << wfn.V_expectation() << "\n";
     char buffer [256];
-    sprintf(buffer, "fw_E_%e_V_%e_a_%e.dat", ecur, V0, a);
+    sprintf(buffer, "lw_E_%e_V_%e_a_%e.dat", ecur, V0, a);
     wfn.write_data(buffer);
 	return 0;
 
