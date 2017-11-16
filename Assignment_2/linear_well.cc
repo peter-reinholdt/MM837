@@ -9,16 +9,12 @@
 #include<fstream>
 #include "forces.h"
 #include "integrators.h"
+#include "wavefunction.h"
+#include "stdio.h"
+
 
 using namespace std;
 
-double simpsons_rule(const vector<double>& f, const double& epsilon) { 
-	double ret=0.0;
-	for (int i = 0 ; i<f.size()-1; i++)  
-		ret += f[i] + 4.0*f[i+1] + f[i+2]; 
-	ret *= epsilon/3.0;
-	return ret;
-}
 
 int main(int argc, char** argv) {
 
@@ -32,11 +28,11 @@ int main(int argc, char** argv) {
 	//Fix the values of phi,phi' at left and right integration endpoints. 
 	//These endpoints are [xmin,xmax]
 	
-    double xmin=-20; 
-	double xmax=20;
+    double xmin=-10; 
+	double xmax=10;
 
-	double q0_l=1e-6*exp(-0.5*xmin);
-	double q0_r=1e-6*exp(-0.5*xmax);
+	double q0_l=exp(-0.5*xmin);
+	double q0_r=exp(-0.5*xmax);
 	
 	double p0_l=0.0;
 	double p0_r=0.0;
@@ -46,7 +42,7 @@ int main(int argc, char** argv) {
 	double tol = 1e-6;
 	double ecur=e0;
     double V0 = 16.03074550;
-    double a  = 2.0;
+    double a  = 1.0;
 	double de=0.01;
 	vector<double> qn_left(1,q0_l), pn_left(1,p0_l);
 	vector<double> qn_right(1,q0_r), pn_right(1,p0_r);
@@ -129,17 +125,18 @@ int main(int argc, char** argv) {
                 //Newton-Rhapson
                 if (it>0){
                     if (fabs(fold) < fabs(f)){
-                        fprime = (f-fold)/(de);
+                        //backtrack
                         ecur -= de;
-                        de = -0.10*f/fprime;
-                    }else{
                         fprime = (f-fold)/(de);
-                        de =  -f/fprime;
-                    } 
+                        de = 0.1* (-f/fprime);
+                    }else{
+                    fprime = (f-fold)/(de);
+                    de =  -f/fprime;
+                    }
                 }
             }else{
                 if (it>0){
-                    if ((fold)<(f)){
+                    if (abs(fold)<abs(f)){
                         de = -0.5*de; 
                     }
                 }
@@ -171,10 +168,14 @@ int main(int argc, char** argv) {
 
 	vector<double> norm_arr; 
 	for (int i = 0; i<phi.size(); i++) 
-		norm_arr.push_back(phi[i]*phi[i]);  
+		norm_arr.push_back(phi[i]*phi[i]);
 
 	double norm = simpsons_rule(norm_arr, eps); 
 	cout << "norm = " << norm << endl;	
+
+
+
+
 
 	fout << setprecision(6); 
 	for (int i = 0 ; i<phi.size(); i++) {
@@ -184,7 +185,29 @@ int main(int argc, char** argv) {
 		fout << (double)(i)*eps+xmin << "     " << phi[i] << endl;
 	}
 
-    wavefunction<> wfn	
+
+	vector<double> norm_arr2; 
+	for (int i = 0; i<phi.size(); i++) 
+		norm_arr2.push_back(phi[i]*phi[i]);
+
+	norm = simpsons_rule(norm_arr2, eps); 
+	cout << "norm = " << norm << endl;	
+    
+    LinearWell sw(ecur, V0, a); 
+    wavefunction<LinearWell> wfn(phi, phi_prime, sw, xmin, xmax, niter, ecur);
+    cout << "Norm = " << wfn.norm() << "\n";
+    cout << "<x> = " << wfn.x_expectation() << "\n";
+    cout << "<x2> = " << wfn.x2_expectation() << "\n";
+    cout << "<p> = " << wfn.p_expectation() << "\n";
+    cout << "<p2> = " << wfn.p2_expectation() << "\n";
+    cout << "sigma(p)**2 = " << wfn.sigma_p()<< "\n";
+    cout << "sigma(x)**2 = " << wfn.sigma_x()<< "\n";
+    cout << "sigma(x)*sigma(p) = " << sqrt(wfn.sigma_p() * wfn.sigma_x()) << "\n";
+    cout << "<T> = " << -1.0 * wfn.p2_expectation() << "\n";
+    cout << "<V> = " << wfn.V_expectation() << "\n";
+    char buffer [256];
+    sprintf(buffer, "fw_E_%e_V_%e_a_%e.dat", ecur, V0, a);
+    wfn.write_data(buffer);
 	return 0;
 
 }

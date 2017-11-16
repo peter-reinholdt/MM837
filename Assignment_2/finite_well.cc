@@ -10,6 +10,9 @@
 #include "forces.h"
 #include "integrators.h"
 #include "wavefunction.h"
+#include "stdio.h"
+
+
 using namespace std;
 
 
@@ -25,8 +28,8 @@ int main(int argc, char** argv) {
 	//Fix the values of phi,phi' at left and right integration endpoints. 
 	//These endpoints are [xmin,xmax]
 	
-    double xmin=-20; 
-	double xmax=20;
+    double xmin=-10; 
+	double xmax=10;
 
 	double q0_l=exp(-0.5*xmin);
 	double q0_r=exp(-0.5*xmax);
@@ -39,7 +42,7 @@ int main(int argc, char** argv) {
 	double tol = 1e-6;
 	double ecur=e0;
     double V0 = 16.03074550;
-    double a  = 2.0;
+    double a  = 1.0;
 	double de=0.01;
 	vector<double> qn_left(1,q0_l), pn_left(1,p0_l);
 	vector<double> qn_right(1,q0_r), pn_right(1,p0_r);
@@ -121,8 +124,15 @@ int main(int argc, char** argv) {
             if(do_nr){
                 //Newton-Rhapson
                 if (it>0){
+                    if (fabs(fold) < fabs(f)){
+                        //backtrack
+                        ecur -= de;
+                        fprime = (f-fold)/(de);
+                        de = 0.1* (-f/fprime);
+                    }else{
                     fprime = (f-fold)/(de);
                     de =  -f/fprime;
+                    }
                 }
             }else{
                 if (it>0){
@@ -184,8 +194,20 @@ int main(int argc, char** argv) {
 	cout << "norm = " << norm << endl;	
     
     FiniteSquareWell sw(ecur, V0, a); 
-    wavefunction<FiniteSquareWell> wfn(phi, phi_prime, sw, xmin, xmax, niter);
+    wavefunction<FiniteSquareWell> wfn(phi, phi_prime, sw, xmin, xmax, niter, ecur);
     cout << "Norm = " << wfn.norm() << "\n";
+    cout << "<x> = " << wfn.x_expectation() << "\n";
+    cout << "<x2> = " << wfn.x2_expectation() << "\n";
+    cout << "<p> = " << wfn.p_expectation() << "\n";
+    cout << "<p2> = " << wfn.p2_expectation() << "\n";
+    cout << "sigma(p)**2 = " << wfn.sigma_p()<< "\n";
+    cout << "sigma(x)**2 = " << wfn.sigma_x()<< "\n";
+    cout << "sigma(x)*sigma(p) = " << sqrt(wfn.sigma_p() * wfn.sigma_x()) << "\n";
+    cout << "<T> = " << -1.0 * wfn.p2_expectation() << "\n";
+    cout << "<V> = " << wfn.V_expectation() << "\n";
+    char buffer [256];
+    sprintf(buffer, "fw_E_%e_V_%e_a_%e.dat", ecur, V0, a);
+    wfn.write_data(buffer);
 	return 0;
 
 }

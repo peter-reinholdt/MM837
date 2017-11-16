@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "forces.h"
 
 double simpsons_rule(const std::vector<double>& f, const double& delta) { 
@@ -19,7 +20,7 @@ class wavefunction{
         std::vector<double> psiprimeprime;
         std::vector<double> x, x2, ones, V;
         const Potential& pot;
-        double xmin, xmax, epsilon;
+        double xmin, xmax, epsilon, E;
         int nsteps;
     public:
         //we assume normalized wavefunction
@@ -28,8 +29,9 @@ class wavefunction{
                      Potential pot_in,
                      double xmin_in,
                      double xmax_in,
-                     int nsteps_in):
-                     psi(psi_in), psiprime(psiprime_in), pot(pot_in), xmax(xmax_in), xmin(xmin_in), nsteps(nsteps_in) {
+                     int nsteps_in,
+                     double E_in):
+                     psi(psi_in), psiprime(psiprime_in), pot(pot_in), xmax(xmax_in), xmin(xmin_in), nsteps(nsteps_in), E(E_in) {
                         epsilon= (xmax-xmin)/double(nsteps-1);
                         x.resize(psi.size());
                         x2.resize(psi.size());
@@ -106,4 +108,10 @@ class wavefunction{
             //hbar = 1                                        (-i) * (-i) = i*i = -1
             return -1.0*p2_expectation() - (-1.0) * p_expectation() * p_expectation(); 
         }
+    void write_data(std::string filename){
+        std::ofstream fout(filename.c_str());
+        for (int i=0; i<psi.size(); i++){
+            fout << x[i] << "," << psi[i] << "," << V[i] << "," << E <<"\n";
+        } 
+    }
 };
