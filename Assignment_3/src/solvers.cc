@@ -21,7 +21,12 @@ inline void metropolis_sweep(std::vector<std::vector<int> >& lattice,
     int delta_E, sigma_old, sigma_new;
     int L = lattice.size();
     int i_plus, i_minus, j_plus, j_minus;
+    std::vector<double> exp_minus_beta_E;
     double p_accept;
+
+    for (int i=0; i<8; i++){
+       exp_minus_beta_E.push_back(exp(-beta*i)); 
+    }
 
     for (int i=0; i<L; i++){
         for (int j=0; j<L; j++){
@@ -55,7 +60,7 @@ inline void metropolis_sweep(std::vector<std::vector<int> >& lattice,
                 //accept if energy is lower
                 lattice[i][j] = sigma_new;
             } else {
-                p_accept = exp(-beta*delta_E);
+                p_accept = exp_minus_beta_E[delta_E]; //exp(-beta*delta_E);
                 if (p_accept > double_dist(gen)){
                     //accept with p_accept probability otherwise
                     lattice[i][j] = sigma_new;
