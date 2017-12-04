@@ -1,0 +1,14 @@
+[[solver]]
+solver_type = "metropolis"
+#solver_type = "cluster"
+n_steps_therm     = 10000
+n_steps_prod      = 100000
+
+[[system]]
+side_length = 20
+potts_q     = 2
+beta        = 1.0
+
+[[output]]
+outfile     = "output.dat"
+outfreq     = 1000
