@@ -1,4 +1,5 @@
 #include <vector>
+#include <stack>
 #include <time.h>
 #include "toml.h"
 #include <random>
@@ -71,6 +72,70 @@ inline void metropolis_sweep(std::vector<std::vector<int> >& lattice,
 };
 
 
+inline void cluster_sweep(std::vector<std::vector<int> >& lattice,
+                          double beta,
+                          std::mt19937& gen,
+                          std::uniform_int_distribution<int>& int_dist, 
+                          std::uniform_real_distribution<double>& double_dist){
+    int i_plus, j_plus, i_minus, j_minus;
+    int L = lattice.size();
+    int sigma_old, sigma_new;
+    std::stack<std::pair<int,int> > cluster_buffer;
+    std::pair<int,int> current_site;
+    double p_add = 1 - exp(-beta);
+    
+    //pick starting seed
+    int i = int_dist(gen);
+    int j = int_dist(gen);
+
+    //pick *new* value of q
+    sigma_old = lattice[i][j];
+    do{
+        sigma_new = int_dist(gen);
+    } while (sigma_new == sigma_old);
+
+    //flip spin of original and add to stack
+    lattice[i][j] = sigma_new;
+    cluster_buffer.push(std::make_pair(i, j));
+
+    while(!cluster_buffer.empty()){
+        std::vector<std::pair<int,int> > neighbours;
+        //look at the top of the stack, and find the neighbours
+        current_site = cluster_buffer.top();
+        cluster_buffer.pop();
+
+        i = current_site.first; 
+        j = current_site.second; 
+
+        i_plus  = (i != L-1) ? i+1: 0;
+        i_minus = (i != 0  ) ? i-1: L-1;
+        j_plus  = (j != L-1) ? j+1: 0;
+        j_minus = (j != 0  ) ? j-1: L-1;
+
+        neighbours.push_back(std::make_pair(i_minus, j));
+        neighbours.push_back(std::make_pair(i_plus, j));
+        neighbours.push_back(std::make_pair(i, j_minus));
+        neighbours.push_back(std::make_pair(i, j_plus));
+        for (int n=0; n<(int)neighbours.size(); n++){
+            i = neighbours[n].first;
+            j = neighbours[n].second;
+            if (lattice[i][j] == sigma_old){
+                if (double_dist(gen) < p_add){
+                    //flip spin now, so it is not considered later
+                    lattice[i][j] = sigma_new;
+                    cluster_buffer.push(std::make_pair(i,j));
+                }
+            }
+        }
+    }
+
+};
+
+
+
+///////////////////////
+//Standard metropolis//
+///////////////////////
 void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_q, double beta, std::string outfile, int outfreq){
     //store lattice as 2d array
     std::vector<std::vector<int> > lattice;
@@ -102,16 +167,41 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_
     }
     //write properties to file
     write_energy(energies, outfile);
-    /* 
-    for (int i=0; i<side_length; i++){
-        for (int j=0; j<side_length; j++){
-            std::cout << lattice[i][j];
-        }
-        std::cout << "\n";
-    }
-    */
 };
 
 
+////////////////////
+//Standard cluster//
+////////////////////
+void cluster(int n_steps_therm, int n_steps_prod, int side_length, int potts_q, double beta, std::string outfile, int outfreq){
+    //store lattice as 2d array
+    std::vector<std::vector<int> > lattice;
+    std::mt19937 gen(time(NULL));
+    std::uniform_int_distribution<int> int_dist(0, potts_q-1);
+    std::uniform_real_distribution<double> real_dist(0.0, 1.0);
+    std::vector<int> energies;
+    
+    //setup lattice (hot start)
+    for (int i=0; i<side_length; i++){
+        std::vector<int> line;
+        for (int j=0; j<side_length; j++){
+            line.push_back(int_dist(gen));     
+        }
+        lattice.push_back(line);
+    }
 
-void cluster(int n_steps_therm, int n_steps_prod, int side_length, int potts_q, double beta, std::string outfile, int outfreq){};
+
+    //thermalize
+    for (int n=0; n<n_steps_therm; n++){
+        cluster_sweep(lattice, beta, gen, int_dist, real_dist);
+    }
+    //production run
+    for (int n=0; n<n_steps_prod; n++){
+        cluster_sweep(lattice, beta, gen, int_dist, real_dist);
+        if (n%outfreq == 0){
+            energies.push_back(compute_energy(lattice));
+        }
+    }
+    //write properties to file
+    write_energy(energies, outfile);
+};
