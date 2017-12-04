@@ -3,6 +3,7 @@
 #include "toml.h"
 #include <random>
 #include <iostream>
+#include "properties.h"
 
 inline int delta_function(int i, int j){
     if (i==j){
@@ -63,7 +64,6 @@ inline void metropolis_sweep(std::vector<std::vector<int> >& lattice,
         }
     }
 };
-inline void compute_properties(){};
 
 
 void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_q, double beta, std::string outfile, int outfreq){
@@ -72,6 +72,7 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_
     std::mt19937 gen(time(NULL));
     std::uniform_int_distribution<int> int_dist(0, potts_q-1);
     std::uniform_real_distribution<double> real_dist(0.0, 1.0);
+    std::vector<int> energies;
     
     //setup lattice (hot start)
     for (int i=0; i<side_length; i++){
@@ -91,10 +92,12 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_
     for (int n=0; n<n_steps_prod; n++){
         metropolis_sweep(lattice, beta, gen, int_dist, real_dist);
         if (n%outfreq == 0){
-            compute_properties();
+            energies.push_back(compute_energy(lattice));
         }
     }
-    /*
+    //write properties to file
+    write_energy(energies, outfile);
+    /* 
     for (int i=0; i<side_length; i++){
         for (int j=0; j<side_length; j++){
             std::cout << lattice[i][j];
@@ -107,5 +110,3 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_
 
 
 void cluster(int n_steps_therm, int n_steps_prod, int side_length, int potts_q, double beta, std::string outfile, int outfreq){};
-
-
