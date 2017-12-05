@@ -14,7 +14,7 @@ int compute_energy(std::vector<std::vector<int> >& lattice){
     int L = lattice.size();
     int energy = 2*L*L;
     int i_plus, j_plus;
-    for (int i=0; i<L-1; i++){
+    for (int i=0; i<L; i++){
         for (int j=0; j<L+1; j++){
             i_plus  = (i != L-1) ? i+1: 0;
             j_plus  = (j != L-1) ? j+1: 0;
@@ -77,3 +77,28 @@ void write_properties(std::vector<int> energies, std::string outfile){
     of.close();
 }
 
+
+
+void write_energies(std::vector<int> energies, std::string outfile){
+    std::ofstream of;
+    of.open(outfile);
+    for (auto & element: energies){
+       of << element << "\n";
+    }
+    of.close();
+}
+
+
+void write_configuration(std::vector<std::vector<int> >& lattice, std::string outfile){
+    std::ofstream of;
+    of.open(outfile);
+    int L = lattice.size();
+    for (int i=0; i<L; i++){
+        for (int j=0; j<L; j++){
+            of << lattice[i][j] << " ";
+        }
+        of << "\n";
+    }
+    of.flush();
+    of.close();
+}
