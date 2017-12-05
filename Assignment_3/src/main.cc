@@ -3,6 +3,7 @@
 #include "toml.h"
 #include "solvers.h"
 
+
 int main(int argc, char** argv){
     if (argc < 2){
         std::cout << "Missing parameterfile.\n";
@@ -32,6 +33,8 @@ int main(int argc, char** argv){
     auto output_settings = v.get<toml::Array>("output")[0];
     auto outfile            = output_settings.get<std::string>("outfile");
     auto outfreq            = output_settings.get<int>("outfreq");
+
+
 
     if (solver_type == "metropolis"){
         //call metropolis solver

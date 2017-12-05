@@ -24,8 +24,12 @@ inline void metropolis_sweep(std::vector<std::vector<int> >& lattice,
     int i_plus, i_minus, j_plus, j_minus;
     std::vector<double> exp_minus_beta_E;
     double p_accept;
-
-    for (int i=0; i<8; i++){
+    
+    //(local) delta_E on spin flip is -4, -3, -2, -1, 0, 1, 2, 3, 4.
+    //we always accept delta_E <= 0; for 0, 1, 2, 3, 4
+    //make a list that we can index with delta_E to get p_acc
+    //this avoids ~(L**2) calculations of exp(-beta*i)
+    for (int i=0; i<5; i++){
        exp_minus_beta_E.push_back(exp(-beta*i)); 
     }
 

@@ -12,7 +12,7 @@ inline int delta_function(int i, int j){
 
 int compute_energy(std::vector<std::vector<int> >& lattice){
     int L = lattice.size();
-    int energy = -(L*L);
+    int energy = 2*L*L;
     int i_plus, j_plus;
     for (int i=0; i<L-1; i++){
         for (int j=0; j<L+1; j++){
