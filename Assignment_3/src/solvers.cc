@@ -170,7 +170,7 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_
         }
     }
     //write properties to file
-    write_energy(energies, outfile);
+    write_properties(energies, outfile);
 };
 
 
@@ -207,5 +207,5 @@ void cluster(int n_steps_therm, int n_steps_prod, int side_length, int potts_q, 
         }
     }
     //write properties to file
-    write_energy(energies, outfile);
+    write_properties(energies, outfile);
 };
