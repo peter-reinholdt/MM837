@@ -167,7 +167,7 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_
         metropolis_sweep(lattice, beta, gen, int_dist, real_dist);
         if (n%outfreq == 0){
             energies.push_back(compute_energy(lattice));
-            write_configuration(lattice, outfile + ".conf" + std::to_string(n));
+            //write_configuration(lattice, outfile + ".conf" + std::to_string(n));
         }
     }
     //write properties to file

@@ -15,7 +15,7 @@ int compute_energy(std::vector<std::vector<int> >& lattice){
     int energy = 2*L*L;
     int i_plus, j_plus;
     for (int i=0; i<L; i++){
-        for (int j=0; j<L+1; j++){
+        for (int j=0; j<L; j++){
             i_plus  = (i != L-1) ? i+1: 0;
             j_plus  = (j != L-1) ? j+1: 0;
             energy -= delta_function(lattice[i][j], lattice[i_plus][j]);
