@@ -3,7 +3,6 @@
 #include "toml.h"
 #include "solvers.h"
 
-
 int main(int argc, char** argv){
     if (argc < 2){
         std::cout << "Missing parameterfile.\n";
@@ -33,15 +32,15 @@ int main(int argc, char** argv){
     auto output_settings = v.get<toml::Array>("output")[0];
     auto outfile            = output_settings.get<std::string>("outfile");
     auto outfreq            = output_settings.get<int>("outfreq");
-
+    auto conf_outfreq       = output_settings.get<int>("conf_outfreq");
+    
 
 
     if (solver_type == "metropolis"){
         //call metropolis solver
-        metropolis(n_steps_therm, n_steps_prod, side_length, potts_q, beta, outfile, outfreq);
+        metropolis(n_steps_therm, n_steps_prod, side_length, potts_q, beta, outfile, outfreq, conf_outfreq);
     }else if (solver_type == "cluster"){
         //call cluster solver
-        cluster(n_steps_therm, n_steps_prod, side_length, potts_q, beta, outfile, outfreq);
+        cluster(n_steps_therm, n_steps_prod, side_length, potts_q, beta, outfile, outfreq, conf_outfreq);
     }
-
 }
