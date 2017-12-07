@@ -4,18 +4,21 @@
 #include <random>
 #include <iostream>
 #include "properties.h"
+#include "xoroshiro128plus.h"
+
+
 
 inline int delta_function(int i, int j);
 inline void metropolis_sweep(std::vector<std::vector<int> >& lattice,
                              double beta,
                              int qmax,
-                             std::mt19937& gen,
+                             xoroshiro128plus& gen,
                              std::uniform_int_distribution<int>& q_dist, 
                              std::uniform_real_distribution<double>& double_dist);
 
 inline void cluster_sweep(std::vector<std::vector<int> >& lattice,
                           double beta,
-                          std::mt19937& gen,
+                          xoroshiro128plus& gen,
                           std::uniform_int_distribution<int>& q_dist, 
                           std::uniform_int_distribution<int>& L_dist, 
                           std::uniform_real_distribution<double>& double_dist);

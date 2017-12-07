@@ -6,6 +6,8 @@
 #include <iostream>
 #include "properties.h"
 #include "statistics.h"
+#include "xoroshiro128plus.h"
+#include <array>
 
 
 inline int delta_function(int i, int j){
@@ -19,7 +21,7 @@ inline int delta_function(int i, int j){
 inline void metropolis_sweep(std::vector<std::vector<int> >& lattice,
                              double beta,
                              int q_max,
-                             std::mt19937& gen,
+                             xoroshiro128plus& gen,
                              std::uniform_int_distribution<int>& q_dist, 
                              std::uniform_real_distribution<double>& double_dist){
     int delta_E, sigma_old, sigma_new;
@@ -94,7 +96,7 @@ inline void metropolis_sweep(std::vector<std::vector<int> >& lattice,
 
 inline void cluster_sweep(std::vector<std::vector<int> >& lattice,
                           double beta,
-                          std::mt19937& gen,
+                          xoroshiro128plus& gen,
                           std::uniform_int_distribution<int>& q_dist,
                           std::uniform_int_distribution<int>& L_dist,
                           std::uniform_real_distribution<double>& double_dist){
@@ -163,8 +165,17 @@ inline void cluster_sweep(std::vector<std::vector<int> >& lattice,
 void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_q, double beta, std::string outfile, int outfreq, int conf_outfreq){
     //store lattice as 2d array
     std::vector<std::vector<int> > lattice;
-    std::mt19937 gen(time(NULL));
-    //std::uniform_int_distribution<int> q_dist(0, potts_q-1);
+    //std::mt19937 gen(time(NULL));
+    //
+    std::random_device rd;
+    std::array<uint32_t,4> seed;
+    seed[0] = rd();
+    seed[1] = rd();
+    seed[2] = rd();
+    seed[3] = rd();
+    xoroshiro128plus gen(seed);
+
+
     std::uniform_int_distribution<int> q_dist(0, potts_q-2);
     std::uniform_real_distribution<double> real_dist(0.0, 1.0);
     std::vector<double> energies;
@@ -209,7 +220,13 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_
 void cluster(int n_steps_therm, int n_steps_prod, int side_length, int potts_q, double beta, std::string outfile, int outfreq, int conf_outfreq){
     //store lattice as 2d array
     std::vector<std::vector<int> > lattice;
-    std::mt19937 gen(time(NULL));
+    std::random_device rd;
+    std::array<uint32_t,4> seed;
+    seed[0] = rd();
+    seed[1] = rd();
+    seed[2] = rd();
+    seed[3] = rd();
+    xoroshiro128plus gen(seed);
     std::uniform_int_distribution<int> q_dist(0, potts_q-1);
     std::uniform_int_distribution<int> L_dist(0, side_length-1);
     std::uniform_real_distribution<double> real_dist(0.0, 1.0);
