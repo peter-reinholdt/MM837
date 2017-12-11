@@ -177,6 +177,7 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_
 
 
     std::uniform_int_distribution<int> q_dist(0, potts_q-2);
+    std::uniform_int_distribution<int> q_dist_start(0, potts_q-1);
     std::uniform_real_distribution<double> real_dist(0.0, 1.0);
     std::vector<double> energies;
     
@@ -184,10 +185,12 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_
     for (int i=0; i<side_length; i++){
         std::vector<int> line;
         for (int j=0; j<side_length; j++){
-            line.push_back(q_dist(gen));     
+            line.push_back(q_dist_start(gen));     
         }
+	line.shrink_to_fit();
         lattice.push_back(line);
     }
+    lattice.shrink_to_fit();
 
 
     //thermalize
@@ -205,7 +208,7 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, int potts_
         }
     }
 
-    std::cout << "Acceptance ratio: " << (double) N_ACCEPTED_FLIPS / (double) N_ATTEMPTED_FLIPS << std::endl;
+    std::cout << "Beta: " << beta << " Acceptance ratio: " << (double) N_ACCEPTED_FLIPS / (double) N_ATTEMPTED_FLIPS << std::endl;
 
     //write properties and final configuration to file
     write_properties(energies, outfile + ".autocorr");
@@ -258,7 +261,70 @@ void cluster(int n_steps_therm, int n_steps_prod, int side_length, int potts_q, 
         }
     }
 
-    std::cout << "Acceptance ratio: " << (double) N_ACCEPTED_FLIPS / (double) N_ATTEMPTED_FLIPS << std::endl;
+    std::cout << "Beta: " << beta << " Acceptance ratio: " << (double) N_ACCEPTED_FLIPS / (double) N_ATTEMPTED_FLIPS << std::endl;
+
+
+    //write properties and final configuration to file
+    write_properties(energies, outfile + ".autocorr");
+    write_energies(energies, outfile + ".energies");
+    write_configuration(lattice, outfile + ".conf");
+};
+
+
+
+////////////////
+//Hybrid model//
+////////////////
+void hybrid(int n_steps_therm, int n_steps_prod, int side_length, int potts_q, double beta, std::string outfile, int outfreq, int conf_outfreq, int metropolis_freq){
+    //store lattice as 2d array
+    std::vector<std::vector<int> > lattice;
+    std::random_device rd;
+    std::array<uint32_t,4> seed;
+    seed[0] = rd();
+    seed[1] = rd();
+    seed[2] = rd();
+    seed[3] = rd();
+    xoroshiro128plus gen(seed);
+    std::uniform_int_distribution<int> q_dist(0, potts_q-1);
+    std::uniform_int_distribution<int> L_dist(0, side_length-1);
+    std::uniform_real_distribution<double> real_dist(0.0, 1.0);
+    std::vector<double> energies;
+    
+    //setup lattice (hot start)
+    for (int i=0; i<side_length; i++){
+        std::vector<int> line;
+        for (int j=0; j<side_length; j++){
+            line.push_back(q_dist(gen));     
+        }
+        lattice.push_back(line);
+    }
+
+
+    //thermalize
+    
+    for (int n=0; n<n_steps_therm; n++){
+	if (n%metropolis_freq==0){
+	    metropolis_sweep(lattice, beta, potts_q, gen, q_dist, real_dist);
+	}else{
+	    cluster_sweep(lattice, beta, gen, q_dist, L_dist, real_dist);
+	}
+    }
+    //production run
+    for (int n=0; n<n_steps_prod; n++){
+	if (n%metropolis_freq==0){
+	    metropolis_sweep(lattice, beta, potts_q, gen, q_dist, real_dist);
+	}else{
+	    cluster_sweep(lattice, beta, gen, q_dist, L_dist, real_dist);
+	}
+        if (n%outfreq == 0){
+            energies.push_back(compute_energy(lattice));
+        }
+        if (n%conf_outfreq == 0){
+            write_configuration(lattice, outfile + ".conf" + std::to_string(n));
+        }
+    }
+
+    std::cout << "Beta: " << beta << " Acceptance ratio: " << (double) N_ACCEPTED_FLIPS / (double) N_ATTEMPTED_FLIPS << std::endl;
 
 
     //write properties and final configuration to file
