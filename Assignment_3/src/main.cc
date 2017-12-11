@@ -34,7 +34,7 @@ int main(int argc, char** argv){
     auto outfile            = output_settings.get<std::string>("outfile");
     auto outfreq            = output_settings.get<int>("outfreq");
     auto conf_outfreq       = output_settings.get<int>("conf_outfreq");
-    
+   	
 
 
     if (solver_type == "metropolis"){
