@@ -23,10 +23,12 @@ void lattice_to_interval(std::vector<std::vector<double> >& lattice){
 
 inline void metropolis_sweep(std::vector<std::vector<double> >& lattice, 
                              xoroshiro128plus& gen, 
-                             std::uniform_real_distribution<double>& delta_dist){
+                             std::uniform_real_distribution<double>& delta_dist,
+                             std::uniform_real_distribution<double>& real_dist){
     int L = lattice.size();
     int i_plus, j_plus, i_minus, j_minus;
-    double delta_E;
+    double delta_E, p_accept;
+    N_ATTEMPTED_FLIPS += L*L;
 
     for (int i=0; i<L; i++){
         for (int j=0; j<L; j++){
@@ -56,13 +58,28 @@ inline void metropolis_sweep(std::vector<std::vector<double> >& lattice,
             delta_e -= (-cos(sigma_old - n1));
             delta_e -= (-cos(sigma_old - n2));
             delta_e -= (-cos(sigma_old - n3));
-
-
+            
+            if (delta_E <= 0){
+                //good change
+                lattice[i][j] = sigma_new;
+                N_ACCEPTED_FLIPS++;
+            }else{
+                p_accept = exp(-beta*delta_E);
+                if (p_accept > real_dist(gen)){
+                    lattice[i][j] = sigma_new;
+                    N_ACCEPTED_FLIPS++;
+                }
+            }
         }
     }
+};
+
+
+
+inline void microcanonical_sweep(std::vector<std::vector<double> >& lattice){
+    
 
 };
-inline void over_relaxation_sweep();
 inline void cluster_sweep();
 
 
