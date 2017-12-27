@@ -133,7 +133,7 @@ inline void cluster_sweep(std::vector<std::vector<double> >& lattice,
 
     //add seed site to accepted spins
     N_ACCEPTED_FLIPS++;
-    cluster_set.insert(std::make_pair(i,j));
+    cluster_set.insert(std::make_pair(i, j));
     cluster_buffer.push(std::make_pair(i, j));
     
 
@@ -163,7 +163,7 @@ inline void cluster_sweep(std::vector<std::vector<double> >& lattice,
             if (cluster_set.count(neighbors[n]) == 0){
                 // neighbor is *not* in cluster already
                 // check if it should be added
-                sy = cos(lattice[i][j]*rx) + sin(lattice[i][j])*ry;
+                sy = cos(lattice[i][j])*rx + sin(lattice[i][j])*ry;
                 p_add = 1.0 - exp(-2*beta*sx*sy); 
                 if (real_dist(gen) < p_add){
                     N_ACCEPTED_FLIPS++;
@@ -178,7 +178,7 @@ inline void cluster_sweep(std::vector<std::vector<double> >& lattice,
         i = site.first;
         j = site.second;
         sx = cos(lattice[i][j])*rx + sin(lattice[i][j])*ry;
-        lattice[i][j] = atan2(lattice[i][j] - 2*sx*ry, lattice[i][j] - 2*sx*rx);
+        lattice[i][j] = atan2(sin(lattice[i][j]) - 2*sx*ry, cos(lattice[i][j]) - 2*sx*rx);
     }
 }
         
@@ -227,7 +227,7 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double bet
         //do n_mc_sweep of microcanonical sweeps
         for (int mc=0; mc<n_mc_sweep; mc++){microcanonical_sweep(lattice);}
         if (n%100 == 0){
-            std::cout << "\rThermalizing, " << std::setprecision(3) << 100 * (double)n / (double)n_steps_therm << "%" << std::flush;
+            std::cout << "\rThermalizing, " << std::setprecision(5) << 100 * (double)n / (double)n_steps_therm << "%" << std::flush;
         }
     }
     std::cout << "\rThermalizing, ...Done!";
@@ -243,7 +243,7 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double bet
             write_configuration(lattice, outfile + ".conf" + std::to_string(n));
         }
         if (n%100 == 0){
-            std::cout << "\rRunning production, " << std::setprecision(3) << 100 * (double)n / (double)n_steps_prod << "%" << std::flush;
+            std::cout << "\rRunning production, " << std::setprecision(5) << 100 * (double)n / (double)n_steps_prod << "%" << std::flush;
         }
     }
     std::cout << "\rRunning production, ...Done!";
@@ -300,7 +300,7 @@ void cluster(int n_steps_therm, int n_steps_prod, int side_length, double beta, 
         //do n_mc_sweep of microcanonical sweeps
         for (int mc=0; mc<n_mc_sweep; mc++){microcanonical_sweep(lattice);}
         if (n%100 == 0){
-            std::cout << "\rThermalizing, " << std::setprecision(3) << 100 * (double)n / (double)n_steps_therm << "%" << std::flush;
+            std::cout << "\rThermalizing, " << std::setprecision(5) << 100 * (double)n / (double)n_steps_therm << "%" << std::flush;
         }
     }
     std::cout << "\rThermalizing, ...Done!";
@@ -316,7 +316,7 @@ void cluster(int n_steps_therm, int n_steps_prod, int side_length, double beta, 
             write_configuration(lattice, outfile + ".conf" + std::to_string(n));
         }
         if (n%100 == 0){
-            std::cout << "\rRunning production, " << std::setprecision(3) << 100 * (double)n / (double)n_steps_prod << "%" << std::flush;
+            std::cout << "\rRunning production, " << std::setprecision(5) << 100 * (double)n / (double)n_steps_prod << "%" << std::flush;
         }
     }
     std::cout << "\rRunning production, ...Done!";
