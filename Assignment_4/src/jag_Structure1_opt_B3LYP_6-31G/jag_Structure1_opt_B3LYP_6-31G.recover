@@ -1,0 +1,10 @@
+Name: 'jag_Structure1_opt_B3LYP_6-31G'
+JobId: 'arch_jkgroup_0-0-5a2ffdca'
+Commandline: '/opt/schrodinger2017-3/jaguar run -jobname=jag_Structure1_opt_B3LYP_6-31G jag_Structure1_opt_B3LYP_6-31G.in -HOST localhost:1 -PROJ /home/reinholdt/.schrodinger/tmp/tproj57658a9538 -DISP append -VIEWNAME jaguar_gui_dir.optimization.Optimization -TMPLAUNCHDIR -ATTACHED'
+BackendCmdline: 'run jexec.py -jobname jag_Structure1_opt_B3LYP_6-31G -nsubjobs 1 jag_Structure1_opt_B3LYP_6-31G.in'
+Outfiles:
+- "jag_Structure1_opt_B3LYP_6-31G.01.mae"
+- "jag_Structure1_opt_B3LYP_6-31G.out"
+- "jag_Structure1_opt_B3LYP_6-31G.log"
+- "jag_Structure1_opt_B3LYP_6-31G.recover"
+- "jag_Structure1_opt_B3LYP_6-31G.01.in"

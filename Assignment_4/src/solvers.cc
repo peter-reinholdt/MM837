@@ -39,7 +39,7 @@ inline void metropolis_sweep(std::vector<std::vector<double> >& lattice,
 
             //delta_E = E(sigma_new) - E(sigma)
             sigma_old = lattice[i][j];
-            sigma_new = sigma_old + delta_dist(gen); 
+            sigma_new = sigma_old - delta_dist(gen); 
             
             //E(sigma_new)
             delta_E += (-cos(sigma_new - n0));
@@ -93,7 +93,7 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double bet
     xoroshiro128plus gen(seed);
 
 
-    std::uniform_real_distribution<double> angle_dist(-M_PI, M_PI);
+    std::uniform_real_distribution<double> angle_dist(0.0, 2*M_PI);
     std::uniform_real_distribution<double> delta_dist(-delta/2.0, delta/2.0);
     std::uniform_real_distribution<double> real_dist(0.0, 1.0);
     std::vector<double> energies;

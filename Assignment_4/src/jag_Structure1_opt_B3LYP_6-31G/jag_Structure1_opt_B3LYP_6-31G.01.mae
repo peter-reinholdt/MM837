@@ -1,0 +1,112 @@
+{ 
+ s_m_m2io_version
+ :::
+ 2.0.0 
+} 
+
+f_m_ct { 
+ s_m_title
+ s_m_entry_id
+ s_m_entry_name
+ i_m_Molecular_charge
+ i_m_Spin_multiplicity
+ s_j_Task
+ s_j_Jaguar_input_file
+ s_j_Jaguar_restart_input_file
+ s_j_Jaguar_restart_mae_file
+ s_j_Jaguar_output_file
+ s_j_Jaguar_log_file
+ s_j_Jaguar_mae_file
+ s_j_QM_Method
+ s_j_QM_Basis
+ i_j_Number_of_canonical_orbitals
+ i_j_Geometry_convergence_category
+ r_j_Gas_Phase_Energy
+ r_j_HOMO
+ r_j_LUMO
+ i_m_ct_format
+ :::
+ Structure1 
+  1 
+  Structure1 
+  0
+  1
+  Optimization 
+  /home/reinholdt/Documents/MM837/Assignment_4/src/jag_Structure1_opt_B3LYP_6-31G/jag_Structure1_opt_B3LYP_6-31G.in 
+  /home/reinholdt/Documents/MM837/Assignment_4/src/jag_Structure1_opt_B3LYP_6-31G/jag_Structure1_opt_B3LYP_6-31G.01.in 
+  /home/reinholdt/Documents/MM837/Assignment_4/src/jag_Structure1_opt_B3LYP_6-31G/jag_Structure1_opt_B3LYP_6-31G.01.mae 
+  /home/reinholdt/Documents/MM837/Assignment_4/src/jag_Structure1_opt_B3LYP_6-31G/jag_Structure1_opt_B3LYP_6-31G.out 
+  /home/reinholdt/Documents/MM837/Assignment_4/src/jag_Structure1_opt_B3LYP_6-31G/jag_Structure1_opt_B3LYP_6-31G.log 
+  /home/reinholdt/Documents/MM837/Assignment_4/src/jag_Structure1_opt_B3LYP_6-31G/jag_Structure1_opt_B3LYP_6-31G.mae 
+  DFT(b3lyp) 
+  6-31g 
+  67
+  3
+  -527.082843201208
+  -0.331171718831659
+  -0.113624501496402
+  2
+ m_depend[16] { 
+  # First column is dependency index #
+  i_m_depend_dependency
+  s_m_depend_property
+  :::
+  1 20 i_m_Molecular_charge 
+  2 20 i_m_Spin_multiplicity 
+  3 20 s_j_Task 
+  4 20 s_j_Jaguar_input_file 
+  5 20 s_j_Jaguar_restart_input_file 
+  6 20 s_j_Jaguar_restart_mae_file 
+  7 20 s_j_Jaguar_output_file 
+  8 20 s_j_Jaguar_log_file 
+  9 20 s_j_Jaguar_mae_file 
+  10 20 s_j_QM_Method 
+  11 20 s_j_QM_Basis 
+  12 20 i_j_Number_of_canonical_orbitals 
+  13 20 i_j_Geometry_convergence_category 
+  14 20 r_j_Gas_Phase_Energy 
+  15 20 r_j_HOMO 
+  16 20 r_j_LUMO 
+  :::
+ } 
+ m_atom[9] { 
+  # First column is atom index #
+  i_m_mmod_type
+  r_m_x_coord
+  r_m_y_coord
+  r_m_z_coord
+  i_m_residue_number
+  i_m_color
+  i_m_atomic_number
+  s_m_color_rgb
+  s_m_atom_name
+  :::
+  1 16 -2.114265 -1.144162 1.325149 1 70 8 FF2F2F  O1 
+  2 16 -0.743555 -1.383953 0.801937 1 70 8 FF2F2F  O2 
+  3 16 -3.043759 -2.067751 0.626532 1 70 8 FF2F2F  O3 
+  4 16 -0.609576 -0.676255 -0.515108 1 70 8 FF2F2F  O4 
+  5 16 -0.524920 0.802625 -0.269351 1 70 8 FF2F2F  O5 
+  6 16 0.810907 1.105883 0.307189 1 70 8 FF2F2F  O6 
+  7 42 -3.350038 -1.507006 -0.130659 1 21 1 FFFFFF  H7 
+  8 16 1.796676 1.139186 -0.803067 1 70 8 FF2F2F  O8 
+  9 42 2.126405 0.204913 -0.804623 1 21 1 FFFFFF  H9 
+  :::
+ } 
+ m_bond[8] { 
+  # First column is bond index #
+  i_m_from
+  i_m_to
+  i_m_order
+  :::
+  1 1 2 1
+  2 1 3 1
+  3 2 4 1
+  4 3 7 1
+  5 4 5 1
+  6 5 6 1
+  7 6 8 1
+  8 8 9 1
+  :::
+ } 
+} 
+

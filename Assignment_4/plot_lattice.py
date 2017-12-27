@@ -7,10 +7,9 @@ import sys
 base = "output.dat.conf"
 
 
-
 plt.ion()
 data = np.loadtxt(base+"0", dtype=np.float64)
-m = plt.matshow(data, vmin=-np.pi, vmax=np.pi, cmap=plt.cm.hsv)
+m = plt.matshow(data, vmin=0.0, vmax=2*np.pi, cmap=plt.cm.jet)
 plt.colorbar()
 
 i=0
