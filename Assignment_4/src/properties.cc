@@ -5,9 +5,9 @@
 
 inline void to_interval(double& x){
     //0..2*PI interval
-    if (x<0){
+    if (x< -1.0*M_PI){
         x += 2*M_PI;
-    } else if (x > 2.0*M_PI){
+    } else if (x > 1.0*M_PI){
         x -= 2*M_PI;
     }
     
@@ -80,9 +80,11 @@ double rho(std::vector<double> x, int t){
 std::vector<double> compute_autocorr(std::vector<double> x){
     //get vector r(t);
     int t_max = 1000;
+    /*
     if ((int)x.size() / 10 < t_max){
         t_max = x.size() / 10;
     }
+    */
     std::vector<double> r;
 
     for (int t=0; t<t_max; t++){
@@ -103,7 +105,7 @@ void write_properties(std::vector<double> energies, std::string outfile){
     of.open(outfile);
     for (int t = 0; t<(int)r.size(); t++){
        tau_int += r[t];
-       of << t << ", " << r[t] << ", " << tau_int << "\n";  
+       of << t << " " << r[t] << " " << tau_int << "\n";  
     }
     of.close();
 }

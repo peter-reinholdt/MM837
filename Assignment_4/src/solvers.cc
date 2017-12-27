@@ -66,11 +66,12 @@ inline void microcanonical_sweep(std::vector<std::vector<double> >& lattice){
     int L = lattice.size();
     int i_plus, j_plus, i_minus, j_minus;
     std::vector<double> nb_angles = {0.0, 0.0, 0.0, 0.0};
-    std::vector<double> Vx;
+    double Vxx, Vxy, Vx_sq;
 
     for (int i=0; i<L; i++){
         for (int j=0; j<L; j++){
-
+            Vxx = 0.0;
+            Vxy = 0.0;
             i_plus  = (i != L-1) ? i+1: 0;
             i_minus = (i != 0  ) ? i-1: L-1;
             j_plus  = (j != L-1) ? j+1: 0;
@@ -82,6 +83,11 @@ inline void microcanonical_sweep(std::vector<std::vector<double> >& lattice){
             nb_angles[2] = lattice[i][j_plus];
             nb_angles[3] = lattice[i][j_minus];
 
+            for (int nb=0; nb<4; nb++){
+                Vxx += cos(nb_angles[nb]);
+                Vxy += sin(nb_angles[nb]);
+            }
+            Vx_sq = Vxx*Vxx + Vxy*Vxy; 
 
             
         }
@@ -108,7 +114,7 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double bet
     xoroshiro128plus gen(seed);
 
 
-    std::uniform_real_distribution<double> angle_dist(0.0, 2*M_PI);
+    std::uniform_real_distribution<double> angle_dist(-1.0*M_PI, 1.0*M_PI);
     std::uniform_real_distribution<double> delta_dist(-delta/2.0, delta/2.0);
     std::uniform_real_distribution<double> real_dist(0.0, 1.0);
     std::vector<double> energies;
@@ -154,7 +160,7 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double bet
 
     std::cout << "Beta: " << beta << " Acceptance ratio: " << (double) N_ACCEPTED_FLIPS / (double) N_ATTEMPTED_FLIPS << std::endl;
     //write properties and final configuration to file
-    //write_properties(energies, outfile + ".autocorr");
+    write_properties(energies, outfile + ".autocorr");
     write_energies(energies, outfile + ".energies");
     write_configuration(lattice, outfile + ".conf");
 
