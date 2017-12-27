@@ -40,5 +40,7 @@ int main(int argc, char** argv){
     if (solver_type == "metropolis"){
         //call metropolis solver
         metropolis(n_steps_therm, n_steps_prod, side_length, beta, outfile, outfreq, conf_outfreq, delta, n_mc_sweep);
+    } else if (solver_type == "cluster"){
+        cluster(n_steps_therm, n_steps_prod, side_length, beta, outfile, outfreq, conf_outfreq, n_mc_sweep);
     }
 }

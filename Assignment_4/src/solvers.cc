@@ -104,10 +104,10 @@ inline void microcanonical_sweep(std::vector<std::vector<double> >& lattice){
 };
 
 
-inline void cluster_sweep(std::vector<std::vector<int> >& lattice,
+inline void cluster_sweep(std::vector<std::vector<double> >& lattice,
                           xoroshiro128plus& gen,
                           std::uniform_real_distribution<double>& angle_dist,
-                          std::uniform_real_distribution<double>& double_dist,
+                          std::uniform_real_distribution<double>& real_dist,
                           std::uniform_int_distribution<int>& L_dist,
                           double beta){
     int i_plus, j_plus, i_minus, j_minus;
@@ -121,7 +121,6 @@ inline void cluster_sweep(std::vector<std::vector<int> >& lattice,
 
     //make set of sites currently in the cluster
     std::set<std::pair<int,int> > cluster_set;
-    std::set<std::pair<int,int> >::iterator cluster_set_iterator;
     
     //pick random vector r
     double theta = angle_dist(gen);
@@ -146,7 +145,6 @@ inline void cluster_sweep(std::vector<std::vector<int> >& lattice,
 
         i = current_site.first; 
         j = current_site.second; 
-
         sx = cos(lattice[i][j])*rx + sin(lattice[i][j])*ry;
 
         i_plus  = (i != L-1) ? i+1: 0;
@@ -167,7 +165,7 @@ inline void cluster_sweep(std::vector<std::vector<int> >& lattice,
                 // check if it should be added
                 sy = cos(lattice[i][j]*rx) + sin(lattice[i][j])*ry;
                 p_add = 1.0 - exp(-2*beta*sx*sy); 
-                if (double_dist(gen) < p_add){
+                if (real_dist(gen) < p_add){
                     N_ACCEPTED_FLIPS++;
                     cluster_set.insert(neighbors[n]);
                     cluster_buffer.push(neighbors[n]);
@@ -186,7 +184,6 @@ inline void cluster_sweep(std::vector<std::vector<int> >& lattice,
         
 
 
-inline void cluster_sweep(){};
 
 
 ////////////////////////////////////////
@@ -225,7 +222,6 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double bet
 
     
     //thermalize
-    std::cout << lattice[0][0] << std::endl;
     for (int n=0; n<n_steps_therm; n++){
         metropolis_sweep(lattice, gen, delta_dist, real_dist, beta);
         //do n_mc_sweep of microcanonical sweeps
@@ -264,4 +260,72 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double bet
 /////////////////////
 //Cluster algorithm//
 /////////////////////
+void cluster(int n_steps_therm, int n_steps_prod, int side_length, double beta, std::string outfile, int outfreq, int conf_outfreq, int n_mc_sweep){
+    //store lattice as 2d array
+    std::vector<std::vector<double> > lattice;
+    
+    //Initialize 128 bits of random state
+    std::random_device rd;
+    std::array<uint32_t,4> seed;
+    seed[0] = rd();
+    seed[1] = rd();
+    seed[2] = rd();
+    seed[3] = rd();
+    xoroshiro128plus gen(seed);
 
+    std::uniform_real_distribution<double> angle_dist(0.0, 2.0*M_PI);
+    std::uniform_real_distribution<double> real_dist(0.0, 1.0);
+    std::uniform_int_distribution<int> L_dist(0, side_length-1);
+    std::vector<double> energies;
+
+    //setup lattice (hot start)
+    for (int i=0; i<side_length; i++){
+        std::vector<double> line;
+        for (int j=0; j<side_length; j++){
+            line.push_back(angle_dist(gen));     
+        }
+        line.shrink_to_fit();
+        lattice.push_back(line);
+    }
+    lattice.shrink_to_fit();
+    
+
+    
+    //thermalize
+    for (int n=0; n<n_steps_therm; n++){
+
+
+
+        cluster_sweep(lattice, gen, angle_dist, real_dist, L_dist, beta);
+        //do n_mc_sweep of microcanonical sweeps
+        for (int mc=0; mc<n_mc_sweep; mc++){microcanonical_sweep(lattice);}
+        if (n%100 == 0){
+            std::cout << "\rThermalizing, " << std::setprecision(3) << 100 * (double)n / (double)n_steps_therm << "%" << std::flush;
+        }
+    }
+    std::cout << "\rThermalizing, ...Done!";
+    std::cout << std::endl;
+    //production run
+    for (int n=0; n<n_steps_prod; n++){
+        cluster_sweep(lattice, gen, angle_dist, real_dist, L_dist, beta);
+        for (int mc=0; mc<n_mc_sweep; mc++){microcanonical_sweep(lattice);}
+        if (n%outfreq == 0){
+            energies.push_back(compute_energy(lattice));
+        }
+        if (n%conf_outfreq == 0){
+            write_configuration(lattice, outfile + ".conf" + std::to_string(n));
+        }
+        if (n%100 == 0){
+            std::cout << "\rRunning production, " << std::setprecision(3) << 100 * (double)n / (double)n_steps_prod << "%" << std::flush;
+        }
+    }
+    std::cout << "\rRunning production, ...Done!";
+    std::cout << std::endl;
+
+    std::cout << "Beta: " << beta << " Acceptance ratio: " << (double) N_ACCEPTED_FLIPS / (double) N_ATTEMPTED_FLIPS << std::endl;
+    //write properties and final configuration to file
+    write_properties(energies, outfile + ".autocorr");
+    write_energies(energies, outfile + ".energies");
+    write_configuration(lattice, outfile + ".conf");
+
+};
