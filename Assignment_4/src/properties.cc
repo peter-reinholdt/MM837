@@ -5,9 +5,9 @@
 
 inline void to_interval(double& x){
     //0..2*PI interval
-    if (x< -1.0*M_PI){
+    if (x<0){
         x += 2*M_PI;
-    } else if (x > 1.0*M_PI){
+    } else if (x > 2.0*M_PI){
         x -= 2*M_PI;
     }
     

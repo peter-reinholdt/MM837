@@ -21,7 +21,7 @@ int main(int argc, char** argv){
     auto solver_type        = solver_settings.get<std::string>("solver_type");
     auto n_steps_therm      = solver_settings.get<int>("n_steps_therm");
     auto n_steps_prod       = solver_settings.get<int>("n_steps_prod");
-    auto microcanonical_freq    = solver_settings.get<int>("microcanonical_freq");
+    auto n_mc_sweep         = solver_settings.get<int>("n_mc_sweep");
     
     //system settings
     auto system_settings    = v.get<toml::Array>("system")[0];
@@ -39,6 +39,6 @@ int main(int argc, char** argv){
 
     if (solver_type == "metropolis"){
         //call metropolis solver
-        metropolis(n_steps_therm, n_steps_prod, side_length, beta, outfile, outfreq, conf_outfreq, delta);
+        metropolis(n_steps_therm, n_steps_prod, side_length, beta, outfile, outfreq, conf_outfreq, delta, n_mc_sweep);
     }
 }
