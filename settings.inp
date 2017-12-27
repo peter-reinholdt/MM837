@@ -1,0 +1,15 @@
+[[solver]]
+solver_type         = "metropolis"
+n_steps_therm       = 10000
+n_steps_prod        = 10000
+microcanonical_freq = 0
+
+[[system]]
+side_length = 64
+beta        = 0.3
+delta       = 0.2
+
+[[output]]
+outfile         = "output.dat"
+outfreq         = 100
+conf_outfreq    = 100
