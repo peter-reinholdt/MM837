@@ -18,7 +18,7 @@ inline void metropolis_sweep(std::vector<std::vector<double> >& lattice,
                              double beta){
     int L = lattice.size();
     int i_plus, j_plus, i_minus, j_minus;
-    int n0, n1, n2, n3;
+    std::vector<double> nb_angles = {0.0, 0.0, 0.0, 0.0};
     double sigma_old, sigma_new;
     double delta_E, p_accept;
     N_ATTEMPTED_FLIPS += L*L;
@@ -32,25 +32,18 @@ inline void metropolis_sweep(std::vector<std::vector<double> >& lattice,
             j_minus = (j != 0  ) ? j-1: L-1;
             
             //neighboring angles
-            n0 = lattice[i_plus][j];
-            n1 = lattice[i_minus][j];
-            n2 = lattice[i][j_plus];
-            n3 = lattice[i][j_minus];
+            nb_angles[0] = lattice[i_plus][j];
+            nb_angles[1] = lattice[i_minus][j];
+            nb_angles[2] = lattice[i][j_plus];
+            nb_angles[3] = lattice[i][j_minus];
 
             //delta_E = E(sigma_new) - E(sigma)
             sigma_old = lattice[i][j];
             sigma_new = sigma_old - delta_dist(gen); 
             
-            //E(sigma_new)
-            delta_E += (-cos(sigma_new - n0));
-            delta_E += (-cos(sigma_new - n1));
-            delta_E += (-cos(sigma_new - n2));
-            delta_E += (-cos(sigma_new - n3));
-            //-E(sigma_old)
-            delta_E -= (-cos(sigma_old - n0));
-            delta_E -= (-cos(sigma_old - n1));
-            delta_E -= (-cos(sigma_old - n2));
-            delta_E -= (-cos(sigma_old - n3));
+            for (int nb=0; nb<4; nb++){
+                delta_E += cos(sigma_old - nb_angles[nb]) - cos(sigma_new - nb_angles[nb]);
+            }
             
             if (delta_E <= 0){
                 //good change
@@ -70,7 +63,25 @@ inline void metropolis_sweep(std::vector<std::vector<double> >& lattice,
 
 
 inline void microcanonical_sweep(std::vector<std::vector<double> >& lattice){
-    
+    int L = lattice.size();
+    int i_plus, j_plus, i_minus, j_minus;
+    int n0, n1, n2, n3;
+
+    std::vector<double> Vx;
+
+    for (int i=0; i<L; i++){
+        for (int j=0; j<L; j++){
+
+            i_plus  = (i != L-1) ? i+1: 0;
+            i_minus = (i != 0  ) ? i-1: L-1;
+            j_plus  = (j != L-1) ? j+1: 0;
+            j_minus = (j != 0  ) ? j-1: L-1;
+            
+            //neighboring angles
+            
+        }
+    }
+
 
 };
 inline void cluster_sweep(){};
