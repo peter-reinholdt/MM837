@@ -130,10 +130,12 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double bet
     std::cout << lattice[0][0] << std::endl;
     for (int n=0; n<n_steps_therm; n++){
         metropolis_sweep(lattice, gen, delta_dist, real_dist, beta);
-
-        std::cout << lattice[0][0] << std::endl;
-
+        if (n%100 == 0){
+            std::cout << "\rThermalizing, " << std::setprecision(3) << 100 * (double)n / (double)n_steps_therm << "%" << std::flush;
+        }
     }
+    std::cout << "\rThermalizing, ...Done!";
+    std::cout << std::endl;
     //production run
     for (int n=0; n<n_steps_prod; n++){
         metropolis_sweep(lattice, gen, delta_dist, real_dist, beta);
@@ -143,7 +145,12 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double bet
         if (n%conf_outfreq == 0){
             write_configuration(lattice, outfile + ".conf" + std::to_string(n));
         }
+        if (n%100 == 0){
+            std::cout << "\rRunning production, " << std::setprecision(3) << 100 * (double)n / (double)n_steps_prod << "%" << std::flush;
+        }
     }
+    std::cout << "\rRunning production, ...Done!";
+    std::cout << std::endl;
 
     std::cout << "Beta: " << beta << " Acceptance ratio: " << (double) N_ACCEPTED_FLIPS / (double) N_ATTEMPTED_FLIPS << std::endl;
     //write properties and final configuration to file
