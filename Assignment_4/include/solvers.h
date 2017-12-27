@@ -14,5 +14,4 @@
 //Standard metropolis//
 ///////////////////////
 void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double beta, std::string outfile, int outfreq, int conf_outfreq, double delta, int n_mc_sweep);
-
-
+void cluster(int n_steps_therm, int n_steps_prod, int side_length, double beta, std::string outfile, int outfreq, int conf_outfreq, int n_mc_sweep);
