@@ -6,7 +6,8 @@
 #include "xoroshiro128plus.h"
 #include "statistics.h"
 #include "properties.h"
-
+#include <stack>
+#include <set>
 
 
 
@@ -101,6 +102,90 @@ inline void microcanonical_sweep(std::vector<std::vector<double> >& lattice){
     }
 
 };
+
+
+inline void cluster_sweep(std::vector<std::vector<int> >& lattice,
+                          xoroshiro128plus& gen,
+                          std::uniform_real_distribution<double>& angle_dist,
+                          std::uniform_real_distribution<double>& double_dist,
+                          std::uniform_int_distribution<int>& L_dist,
+                          double beta){
+    int i_plus, j_plus, i_minus, j_minus;
+    int L = lattice.size();
+    double p_add, sx, sy;
+    N_ATTEMPTED_FLIPS += L*L;
+
+    //make stack of neighbor spins
+    std::stack<std::pair<int,int> > cluster_buffer;
+    std::pair<int,int> current_site;
+
+    //make set of sites currently in the cluster
+    std::set<std::pair<int,int> > cluster_set;
+    std::set<std::pair<int,int> >::iterator cluster_set_iterator;
+    
+    //pick random vector r
+    double theta = angle_dist(gen);
+    double rx = cos(theta);
+    double ry = sin(theta);
+
+    //pick starting seed
+    int i = L_dist(gen);
+    int j = L_dist(gen);
+
+    //add seed site to accepted spins
+    N_ACCEPTED_FLIPS++;
+    cluster_set.insert(std::make_pair(i,j));
+    cluster_buffer.push(std::make_pair(i, j));
+    
+
+    while(!cluster_buffer.empty()){
+        std::vector<std::pair<int,int> > neighbors;
+        //look at the top of the stack, and find the neighbors
+        current_site = cluster_buffer.top();
+        cluster_buffer.pop();
+
+        i = current_site.first; 
+        j = current_site.second; 
+
+        sx = cos(lattice[i][j])*rx + sin(lattice[i][j])*ry;
+
+        i_plus  = (i != L-1) ? i+1: 0;
+        i_minus = (i != 0  ) ? i-1: L-1;
+        j_plus  = (j != L-1) ? j+1: 0;
+        j_minus = (j != 0  ) ? j-1: L-1;
+
+        neighbors.push_back(std::make_pair(i_minus, j));
+        neighbors.push_back(std::make_pair(i_plus, j));
+        neighbors.push_back(std::make_pair(i, j_minus));
+        neighbors.push_back(std::make_pair(i, j_plus));
+
+        for (int n=0; n<(int)neighbors.size(); n++){
+            i = neighbors[n].first;
+            j = neighbors[n].second;
+            if (cluster_set.count(neighbors[n]) == 0){
+                // neighbor is *not* in cluster already
+                // check if it should be added
+                sy = cos(lattice[i][j]*rx) + sin(lattice[i][j])*ry;
+                p_add = 1.0 - exp(-2*beta*sx*sy); 
+                if (double_dist(gen) < p_add){
+                    N_ACCEPTED_FLIPS++;
+                    cluster_set.insert(neighbors[n]);
+                    cluster_buffer.push(neighbors[n]);
+                }
+           }
+        }
+    }
+    for (auto site : cluster_set){
+        //flip all spins in the cluster
+        i = site.first;
+        j = site.second;
+        sx = cos(lattice[i][j])*rx + sin(lattice[i][j])*ry;
+        lattice[i][j] = atan2(lattice[i][j] - 2*sx*ry, lattice[i][j] - 2*sx*rx);
+    }
+}
+        
+
+
 inline void cluster_sweep(){};
 
 
