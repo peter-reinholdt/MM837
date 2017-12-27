@@ -24,10 +24,33 @@ void lattice_to_interval(std::vector<std::vector<double> >& lattice){
 }
 
 
-double compute_energy(std::vector<std::vector<int> >& lattice){
+double compute_energy(std::vector<std::vector<double> >& lattice){
     int L = lattice.size();
-    double energy = 2*L*L;
-    return energy;
+    int i_plus, j_plus;
+    double energy = 0.0;
+    double sigma;
+    std::vector<double> nb_angles = {0.0, 0.0};
+    /* Doing     or 
+     * [ ][0][ ]   [ ][0][ ]
+     * [ ][x][0]   [0][x][0]
+     * [ ][ ][ ]   [ ][0][ ]
+     * is equivalent (after normalization with either 2*L*L  or 4*L*L
+     * since the cos() is an even function and the interaction i-j is the same as j-i
+     */
+    for (int i=0; i<L; i++){
+        for (int j=0; j<L; j++){
+            i_plus  = (i != L-1) ? i+1: 0;
+            j_plus  = (j != L-1) ? j+1: 0;
+            
+            //neighboring angles
+            nb_angles[0] = lattice[i_plus][j];
+            nb_angles[1] = lattice[i][j_plus];
+            //delta_E = E(sigma_new) - E(sigma)
+            sigma = lattice[i][j];
+            energy -= cos(sigma - nb_angles[0]) + cos(sigma - nb_angles[1]);
+        }
+    }
+    return energy / (2*L*L);
 };
 
 

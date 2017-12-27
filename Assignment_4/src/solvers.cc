@@ -65,8 +65,7 @@ inline void metropolis_sweep(std::vector<std::vector<double> >& lattice,
 inline void microcanonical_sweep(std::vector<std::vector<double> >& lattice){
     int L = lattice.size();
     int i_plus, j_plus, i_minus, j_minus;
-    int n0, n1, n2, n3;
-
+    std::vector<double> nb_angles = {0.0, 0.0, 0.0, 0.0};
     std::vector<double> Vx;
 
     for (int i=0; i<L; i++){
@@ -78,10 +77,15 @@ inline void microcanonical_sweep(std::vector<std::vector<double> >& lattice){
             j_minus = (j != 0  ) ? j-1: L-1;
             
             //neighboring angles
+            nb_angles[0] = lattice[i_plus][j];
+            nb_angles[1] = lattice[i_minus][j];
+            nb_angles[2] = lattice[i][j_plus];
+            nb_angles[3] = lattice[i][j_minus];
+
+
             
         }
     }
-
 
 };
 inline void cluster_sweep(){};
@@ -134,11 +138,19 @@ void metropolis(int n_steps_therm, int n_steps_prod, int side_length, double bet
     for (int n=0; n<n_steps_prod; n++){
         metropolis_sweep(lattice, gen, delta_dist, real_dist, beta);
         if (n%outfreq == 0){
+            energies.push_back(compute_energy(lattice));
         }
         if (n%conf_outfreq == 0){
             write_configuration(lattice, outfile + ".conf" + std::to_string(n));
         }
     }
+
+    std::cout << "Beta: " << beta << " Acceptance ratio: " << (double) N_ACCEPTED_FLIPS / (double) N_ATTEMPTED_FLIPS << std::endl;
+    //write properties and final configuration to file
+    //write_properties(energies, outfile + ".autocorr");
+    write_energies(energies, outfile + ".energies");
+    write_configuration(lattice, outfile + ".conf");
+
 };
 
 
