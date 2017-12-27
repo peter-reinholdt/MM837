@@ -1,11 +1,20 @@
 #include <vector>
 #include <fstream>
+#include <cmath>
 
-inline int delta_function(int i, int j){
-    if (i==j){
-        return 1;
-    }else{
-        return 0;
+
+inline void to_interval(double& x){
+    //-PI..PI interval
+    x = fmod(x, M_PI);
+}
+
+
+void lattice_to_interval(std::vector<std::vector<double> >& lattice){
+    int L = lattice.size();
+    for (int i=0; i<L; i++){
+        for (int j=0; j<L; j++){
+            to_interval(lattice[i][j]);
+        }
     }
 }
 
@@ -13,17 +22,9 @@ inline int delta_function(int i, int j){
 double compute_energy(std::vector<std::vector<int> >& lattice){
     int L = lattice.size();
     double energy = 2*L*L;
-    int i_plus, j_plus;
-    for (int i=0; i<L; i++){
-        for (int j=0; j<L; j++){
-            i_plus  = (i != L-1) ? i+1: 0;
-            j_plus  = (j != L-1) ? j+1: 0;
-            energy -= delta_function(lattice[i][j], lattice[i_plus][j]);
-            energy -= delta_function(lattice[i][j], lattice[i][j_plus]);
-        }
-    }
-    return energy / (2*L*L);
+    return energy;
 };
+
 
 
 double rho(std::vector<double> x, int t){
@@ -67,7 +68,6 @@ std::vector<double> compute_autocorr(std::vector<double> x){
 }
 
 
-
 void write_properties(std::vector<double> energies, std::string outfile){
     std::ofstream of;
     auto r = compute_autocorr(energies);
@@ -92,10 +92,11 @@ void write_energies(std::vector<double> energies, std::string outfile){
 }
 
 
-void write_configuration(std::vector<std::vector<int> >& lattice, std::string outfile){
+void write_configuration(std::vector<std::vector<double> >& lattice, std::string outfile){
     std::ofstream of;
     of.open(outfile);
     int L = lattice.size();
+    lattice_to_interval(lattice);
     for (int i=0; i<L; i++){
         for (int j=0; j<L; j++){
             of << lattice[i][j] << " ";
