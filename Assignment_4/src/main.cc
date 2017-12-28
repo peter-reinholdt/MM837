@@ -22,6 +22,11 @@ int main(int argc, char** argv){
     auto n_steps_therm      = solver_settings.get<int>("n_steps_therm");
     auto n_steps_prod       = solver_settings.get<int>("n_steps_prod");
     auto n_mc_sweep         = solver_settings.get<int>("n_mc_sweep");
+    int n_repeats;
+    try{
+        n_repeats          = solver_settings.get<int>("n_repeats");
+        }
+    catch(...) {n_repeats = 1;}
     
     //system settings
     auto system_settings    = v.get<toml::Array>("system")[0];
@@ -35,12 +40,12 @@ int main(int argc, char** argv){
     auto outfreq            = output_settings.get<int>("outfreq");
     auto conf_outfreq       = output_settings.get<int>("conf_outfreq");
    	
-
-
+    #pragma omp parallel for schedule(dynamic)
+    for (int nr=0; nr<n_repeats; nr++)
     if (solver_type == "metropolis"){
         //call metropolis solver
-        metropolis(n_steps_therm, n_steps_prod, side_length, beta, outfile, outfreq, conf_outfreq, delta, n_mc_sweep);
+        metropolis(n_steps_therm, n_steps_prod, side_length, beta, outfile + "_" + std::to_string(nr), outfreq, conf_outfreq, delta, n_mc_sweep);
     } else if (solver_type == "cluster"){
-        cluster(n_steps_therm, n_steps_prod, side_length, beta, outfile, outfreq, conf_outfreq, n_mc_sweep);
+        cluster(n_steps_therm, n_steps_prod, side_length, beta, outfile + "_" + std::to_string(nr), outfreq, conf_outfreq, n_mc_sweep);
     }
 }
