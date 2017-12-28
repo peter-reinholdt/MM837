@@ -1,0 +1,16 @@
+[[solver]]
+solver_type         = "metropolis"
+n_steps_therm       = 10000
+n_steps_prod        = 10000
+n_mc_sweep          = 4
+n_repeats           = 16
+
+[[system]]
+side_length = 32
+beta        = 20.0
+delta       = 0.5
+
+[[output]]
+outfile         = "32b20_N4"
+outfreq         = 1
+conf_outfreq    = 10000000
