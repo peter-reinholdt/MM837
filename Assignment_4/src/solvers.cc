@@ -18,7 +18,8 @@ inline void metropolis_sweep(std::vector<std::vector<double> >& lattice,
                              std::uniform_real_distribution<double>& real_dist,
                              double beta){
     int L = lattice.size();
-    int i_plus, j_plus, i_minus, j_minus;
+    int PBC = L - 1;
+    //int i_plus, j_plus, i_minus, j_minus;
     std::vector<double> nb_angles = {0.0, 0.0, 0.0, 0.0};
     double sigma_old, sigma_new;
     double delta_E, p_accept;
@@ -27,16 +28,19 @@ inline void metropolis_sweep(std::vector<std::vector<double> >& lattice,
     for (int i=0; i<L; i++){
         for (int j=0; j<L; j++){
             delta_E = 0.0;
+            /* 
             i_plus  = (i != L-1) ? i+1: 0;
             i_minus = (i != 0  ) ? i-1: L-1;
             j_plus  = (j != L-1) ? j+1: 0;
             j_minus = (j != 0  ) ? j-1: L-1;
+            */
             
             //neighboring angles
-            nb_angles[0] = lattice[i_plus][j];
-            nb_angles[1] = lattice[i_minus][j];
-            nb_angles[2] = lattice[i][j_plus];
-            nb_angles[3] = lattice[i][j_minus];
+            //using bitwise and to do the PBC
+            nb_angles[0] = lattice[(i+1)&PBC][j];
+            nb_angles[1] = lattice[(i-1)&PBC][j];
+            nb_angles[2] = lattice[i][(j+1)&PBC];
+            nb_angles[3] = lattice[i][(j-1)&PBC];
 
             //delta_E = E(sigma_new) - E(sigma)
             sigma_old = lattice[i][j];
@@ -65,7 +69,8 @@ inline void metropolis_sweep(std::vector<std::vector<double> >& lattice,
 
 inline void microcanonical_sweep(std::vector<std::vector<double> >& lattice){
     int L = lattice.size();
-    int i_plus, j_plus, i_minus, j_minus;
+    int PBC = L - 1;
+    //int i_plus, j_plus, i_minus, j_minus;
     std::vector<double> nb_angles = {0.0, 0.0, 0.0, 0.0};
     double Vxx, Vxy, Vx_sq;
     double x, y, x_new, y_new;
@@ -78,17 +83,19 @@ inline void microcanonical_sweep(std::vector<std::vector<double> >& lattice){
             sigma = lattice[i][j];
             x = cos(sigma);
             y = sin(sigma);
-
+            
+            /*
             i_plus  = (i != L-1) ? i+1: 0;
             i_minus = (i != 0  ) ? i-1: L-1;
             j_plus  = (j != L-1) ? j+1: 0;
             j_minus = (j != 0  ) ? j-1: L-1;
-            
+            */
+
             //neighboring angles
-            nb_angles[0] = lattice[i_plus][j];
-            nb_angles[1] = lattice[i_minus][j];
-            nb_angles[2] = lattice[i][j_plus];
-            nb_angles[3] = lattice[i][j_minus];
+            nb_angles[0] = lattice[(i+1)&PBC][j];
+            nb_angles[1] = lattice[(i-1)&PBC][j];
+            nb_angles[2] = lattice[i][(j+1)&PBC];
+            nb_angles[3] = lattice[i][(j-1)&PBC];
 
             for (int nb=0; nb<4; nb++){
                 Vxx += cos(nb_angles[nb]);
@@ -110,8 +117,9 @@ inline void cluster_sweep(std::vector<std::vector<double> >& lattice,
                           std::uniform_real_distribution<double>& real_dist,
                           std::uniform_int_distribution<int>& L_dist,
                           double beta){
-    int i_plus, j_plus, i_minus, j_minus;
+    //int i_plus, j_plus, i_minus, j_minus;
     int L = lattice.size();
+    int PBC = L - 1;
     double p_add, sx, sy;
     N_ATTEMPTED_FLIPS += L*L;
 
@@ -146,16 +154,18 @@ inline void cluster_sweep(std::vector<std::vector<double> >& lattice,
         i = current_site.first; 
         j = current_site.second; 
         sx = cos(lattice[i][j])*rx + sin(lattice[i][j])*ry;
-
+        
+        /*
         i_plus  = (i != L-1) ? i+1: 0;
         i_minus = (i != 0  ) ? i-1: L-1;
         j_plus  = (j != L-1) ? j+1: 0;
         j_minus = (j != 0  ) ? j-1: L-1;
+        */
 
-        neighbors.push_back(std::make_pair(i_minus, j));
-        neighbors.push_back(std::make_pair(i_plus, j));
-        neighbors.push_back(std::make_pair(i, j_minus));
-        neighbors.push_back(std::make_pair(i, j_plus));
+        neighbors.push_back(std::make_pair((i-1)&PBC, j));
+        neighbors.push_back(std::make_pair((i+1)&PBC, j));
+        neighbors.push_back(std::make_pair(i, (j-1)&PBC));
+        neighbors.push_back(std::make_pair(i, (j+1)&PBC));
 
         for (int n=0; n<(int)neighbors.size(); n++){
             i = neighbors[n].first;
