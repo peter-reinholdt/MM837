@@ -126,7 +126,7 @@ void write_configuration(std::vector<std::vector<double> >& lattice, std::string
     std::ofstream of;
     of.open(outfile);
     int L = lattice.size();
-    lattice_to_interval(lattice);
+    //the mapping to 0..2Pi is done externally
     for (int i=0; i<L; i++){
         for (int j=0; j<L; j++){
             of << lattice[i][j] << " ";
