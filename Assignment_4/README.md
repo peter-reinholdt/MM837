@@ -10,5 +10,5 @@ make
 
 The program can be run with
 ```
-./lattice settings.inp
+./XYmodel settings.inp
 ```
