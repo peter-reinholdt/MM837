@@ -1,15 +1,16 @@
 [[solver]]
-solver_type         = "metropolis"
+solver_type         = "cluster"
 n_steps_therm       = 10000
-n_steps_prod        = 10000
-microcanonical_freq = 0
+n_steps_prod        = 100000
+n_mc_sweep          = 0
+n_repeats           = 4
 
 [[system]]
-side_length = 64
-beta        = 0.3
+side_length = 20
+beta        = 1.0
 delta       = 0.2
 
 [[output]]
 outfile         = "output.dat"
-outfreq         = 100
+outfreq         = 10
 conf_outfreq    = 100
